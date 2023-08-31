@@ -15,3 +15,9 @@ variable "instance_name" {
   description = "The instance name to use"
   default     = "ec2-cloudfront"
 }
+
+variable "key_file" {
+  type = string
+  description = "The private key file to use"
+  default = "~/Documents/NOSSAS/Chave DEV.pem"
+}

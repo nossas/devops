@@ -12,7 +12,7 @@ resource "aws_instance" "ec2" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = file("~/Documents/NOSSAS/Chave DEV.pem")
+      private_key = file(var.key_file)
       host        = self.public_dns
     }
   }
@@ -29,7 +29,7 @@ resource "aws_instance" "ec2" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = file("~/Documents/NOSSAS/Chave DEV.pem")
+      private_key = file(var.key_file)
       host        = self.public_dns
     }
   }
