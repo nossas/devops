@@ -31,6 +31,12 @@ resource "aws_cloudfront_distribution" "cf_dist" {
     }
   }
 
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
   tags = local.tags
 
   viewer_certificate {
