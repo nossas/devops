@@ -1,0 +1,27 @@
+services:
+
+  traefik:
+    image: "traefik:v3.1"
+    container_name: traefik
+    command:
+      - "--log.level=${TRAEFIK_LOG_LEVEL-:INFO}"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.defaultRule=Host(`{{ index .Labels \"com.docker.compose.service\"}}.${TRAEFIK_DOMAIN_RULE:-localhost}`)"
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+  
+  whoami:
+    image: "traefik/whoami"
+    container_name: "whoami"
+    labels:
+      - "traefik.enable=true"
