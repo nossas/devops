@@ -15,20 +15,39 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.defaultRule=Host(`{{ index .Labels \"com.docker.compose.service\"}}.${TRAEFIK_DOMAIN_RULE:-localhost}`)"
+      # Etcd Provider
+      - "--providers.etcd=true"
+      - "--providers.etcd.endpoints=etcd:2379"
+      - "--providers.etcd.rootkey=traefik"
       # Certificates
       - "--certificatesResolvers.myresolver.acme.tlsChallenge=true"
       - "--certificatesResolvers.myresolver.acme.email=${TRAEFIK_ACME_EMAIL:-igr.exe@gmail.com}"
       - "--certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - etcd
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+  
+  etcd:
+    image: 'bitnami/etcd:latest'
+    container_name: etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ETCD_ENABLE_V2=true
+      - ETCDCTL_API=3
+    volumes:
+      - ./etcd:/bitnami/etcd
+    ports:
+      - 2379
+      - 2380
   
   whoami:
     image: "traefik/whoami"
