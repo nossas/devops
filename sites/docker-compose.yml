@@ -54,3 +54,46 @@ services:
     container_name: "whoami"
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.whoami.priority=-1"
+  
+  # Applications
+  bonde:
+    image: "nossas/bonde-clients:feature-phone-widget"
+    platform: linux/amd64
+    container_name: "bonde"
+    command: pnpm --filter webpage-client start
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.bonde.loadbalancer.server.port=3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=${PUBLIC_NODE_ENV:-development}
+      - ACTION_SECRET_KEY=${PUBLIC_ACTION_SECRET_KEY}
+      - REACT_APP_API_GRAPHQL_SECRET=${PUBLIC_HASURA_SECRET}
+      - REACT_APP_PAGARME_KEY=${PUBLIC_PAGARME_KEY}
+      - REACT_APP_DOMAIN_API_ACTIVISTS=${PUBLIC_HASURA_API:-http://api-graphql.bonde.devel/v1/graphql}
+      - REACT_APP_DOMAIN_API_GRAPHQL=${PUBLIC_HASURA_API:-http://api-graphql.bonde.devel/v1/graphql}
+      - REACT_APP_DOMAIN_API_REST=${PUBLIC_REST_API:-http://api-rest.bonde.devel}
+      - REACT_APP_DOMAIN_PUBLIC=${DEFAULT_DOMAIN_RULE:-bonde.devel}
+      - REACT_APP_ACTIVE_API_CACHE=${ACTIVE_API_CACHE:-false}
+  
+  cms:
+    image: "nossas/cms:latest"
+    platform: linux/amd64
+    container_name: "cms"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.cms.loadbalancer.server.port=8000"
+    environment:
+      - DEBUG=${DEBUG:-True}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-".localhost"}
+      - CMS_DATABASE_URL=${CMS_DATABASE_URL}
+      - BONDE_DATABASE_URL=${BONDE_DATABASE_URL}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
+      - RECAPTCHA_PUBLIC_KEY=${RECAPTCHA_PUBLIC_KEY}
+      - RECAPTCHA_PRIVATE_KEY=${RECAPTCHA_PRIVATE_KEY}
+      - DISABLE_RECAPTCHA=${DISABLE_RECAPTCHA}
+      - BONDE_ACTION_API_URL=${BONDE_ACTION_API_URL}
+      - BONDE_ACTION_SECRET_KEY=${BONDE_ACTION_SECRET_KEY}

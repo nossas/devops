@@ -13,7 +13,7 @@ Ao chegar na instância, existe uma nova camada, agora de aplicação, que conse
 
 Agora então existe uma capacidade de apontar vários endereços para uma instância e cada endereço desse para um serviço dentro dessa instância. Então passa a ser responsabilidade da aplicação que responde aquele serviço responder a esse endereço, podendo ou não conseguir responder a diversos endereços, mas agora a nível interno como uma aplicação CMS por exemplo.
 
-## Roteamento
+### Roteamento
 
 É muito comum o mesmo site responder em diferentes extensões como por exemplo, .org, .org.br, .com e .com.br, pra isso devemos usar uma funcionalidade do Traefik que possibilita configurar regras de roteamento com [Regex](https://doc.traefik.io/traefik/routing/routers/#host-and-hostregexp). Outro problema que o Regex resolve, são sites com subdomínios, o que também pode ser super comum em aplicações CMS.
 
@@ -25,7 +25,19 @@ HostRegexp(`^.*whoami.(devel|local)$`)
 
 NOTE: O domínio e subdomínios, whoami.devel e whoami.local, irão ser direcionados para o serviço que configurou essa regra no Traefik.
 
+Entende-se que não existam limites para possíveis endereços que devam responder a aplicações deste domínio, por isso para facilitar a criação e manutenção dinâmica dessas configurações adicionamos o [Etcd](https://etcd.io) como um provedor de configurações no Traefik.
 
-traefik/http/routers/whoami-devel/rule "HostRegexp(\`^.*whoami\.(devel|local)$\`)"
-traefik/http/routers/whoami-devel/service "whoami-sites@docker"
+Dessa maneira a consolidação de um roteamento acontece ao configurar as seguintes chave-valor no etcd:
 
+```
+etcdctl put traefik/http/routers/whoami-devel/rule "HostRegexp(\`^.*whoami\.(devel|local)$\`)"
+
+etcdctl put traefik/http/routers/whoami-devel/service "whoami-sites@docker"
+```
+
+### Serviços
+
+Existem 2 principais serviços em nossa stack de tecnologias que se encaixam no domínio Sites.
+
+- BONDE (versão pública)
+- CMS
