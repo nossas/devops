@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block main %}
+<h1>Home</h1>
+<h2>Passo a passo</h2>
+<ol>
+    <li>
+        <h3>Configurar o domínio</h3>
+        <ul>
+            <li>Confere se o domínio já não foi configurado</li>
+            <li>Configura o domínio no Route53 e apresenta a resposta com o NS</li>
+            <li>Deve ser possível checar o status da configuração</li>
+        </ul>
+    </li>
+    <li>
+        <h3>Configurar roteamento</h3>
+        <ul>
+            <li>Apontar serviço</li>
+        </ul>
+    </li>
+</ol>
+<hr />
+<h2>Criar domínio</h2>
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.name.label }}<br>
+        {{ form.name(size=26) }}<br>
+        {% for error in form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.purchase_at.label }}<br>
+        {{ form.purchase_at }}<br>
+        {% for error in form.purchase_at.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.expired_at.label }}<br>
+        {{ form.expired_at }}<br>
+        {% for error in form.expired_at.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+<ul>
+    {% for domain in domains %}
+    <li>
+        <strong>Domínio:</strong> {{domain.name}}
+        <strong>Está ativo?</strong> {{domain.is_active}}
+    </li>
+    {% endfor %}
+</ul>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul>
+    {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+{% endwith %}
+{% endblock %}

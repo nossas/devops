@@ -46,8 +46,8 @@ services:
     volumes:
       - ./etcd:/bitnami/etcd
     ports:
-      - 2379
-      - 2380
+      - "2379:2379"
+      - "2380:2380"
   
   whoami:
     image: "traefik/whoami"

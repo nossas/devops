@@ -1,0 +1,30 @@
+services:
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - "4566:4566"  # Porta para a API universal do LocalStack
+      - "4575:4575"  # Porta para o Route53
+    environment:
+      - SERVICES=route53  # Define quais serviços do AWS serão simulados
+      - DEBUG=1
+      # - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}  # Se estiver usando LocalStack Pro (opcional)
+    volumes:
+      - "./localstack:/var/lib/localstack"
+  
+  app:
+    build:
+      context: flask_app/
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    container_name: "app"
+    depends_on:
+      - localstack
+      - etcd
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.app.loadbalancer.server.port=5000"
+    volumes:
+      - ./flask_app:/app
+      - /var/run/docker.sock:/var/run/docker.sock

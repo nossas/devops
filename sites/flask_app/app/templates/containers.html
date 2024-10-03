@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Containers{% endblock %}
+
+{% block main %}
+    <h1>Containers</h1>
+
+    <!-- Lista os registros DNS -->
+    <ul>
+        {% for container in containers %}
+            <li>
+                <strong>Id:</strong> {{ container.id }} <br>
+                <strong>Name:</strong> {{ container.name }} <br>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">Voltar para a lista de zonas</a>
+{% endblock %}
