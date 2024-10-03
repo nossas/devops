@@ -54,7 +54,10 @@
     {% for domain in domains %}
     <li>
         <strong>Domínio:</strong> {{domain.name}}
-        <strong>Está ativo?</strong> {{domain.is_active}}
+        <ul>
+            <li><strong>Está ativo?</strong> {{domain.is_active}}</li>
+            <li><strong>Está configurado no Route53?</strong> {{domain.is_route53}}</li>
+        </ul>
     </li>
     {% endfor %}
 </ul>

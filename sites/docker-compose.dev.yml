@@ -19,6 +19,9 @@ services:
       dockerfile: Dockerfile
     platform: linux/amd64
     container_name: "app"
+    # Configura Extra Hosts para testar com domínios locais
+    extra_hosts:
+      - "mydomain.devel:172.17.0.1"
     depends_on:
       - localstack
       - etcd

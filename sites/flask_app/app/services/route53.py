@@ -11,6 +11,9 @@ route53 = boto3.client(
 
 
 def check_domain_configuration(domain_name):
+    """
+    TODO: Configurar o apontamento dos IPs
+    """
     hosted_zones = route53.list_hosted_zones()["HostedZones"]
     for zone in hosted_zones:
         if zone['Name'].rstrip('.') == domain_name:

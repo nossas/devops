@@ -27,7 +27,7 @@ def index():
         domains.append(dict(
             name=domain.name,
             is_active=is_domain_active(domain.name),
-            is_route_53=check_domain_configuration(domain.name)
+            is_route53=check_domain_configuration(domain.name)
         ))
 
     return render_template("index.html", domains=domains, form=form)
