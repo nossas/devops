@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_migrate import Migrate
 
-from .extensions import db #, login_manager
+from .extensions import db, login_manager
+from .routes.auth_routes import auth_routes
 from .routes.main_routes import main_routes
 from .routes.dns_routes import dns_routes
 from .routes.etcd_routes import etcd_routes
@@ -15,12 +16,13 @@ def create_app():
 
     # Inicializa extensões
     db.init_app(app)
-    # login_manager.init_app(app)
+    login_manager.init_app(app)
     
     # Inicializa o Flask-Migrate
     migrate = Migrate(app, db)
 
     # Registra blueprints (rotas)
+    app.register_blueprint(auth_routes)
     app.register_blueprint(main_routes)
     app.register_blueprint(dns_routes)
     app.register_blueprint(etcd_routes)

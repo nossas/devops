@@ -1,66 +1,64 @@
-{% extends "base.html" %}
+{% extends "auth/crud/base.html" %}
 
-{% block title %}DNS Records{% endblock %}
+{% block module_title %}DNS Records{% endblock %}
 
-{% block main %}
-    <h1>DNS Records</h1>
-
-    <h2>Criar Registro</h2>
-    <form method="POST" novalidate>
-        {{ form.hidden_tag() }}
-        <div>
-            {{ form.name.label }}<br>
-            {{ form.name }}<br>
-            {% for error in form.name.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.record_type.label }}<br>
-            {{ form.record_type }}<br>
-            {% for error in form.record_type.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.value.label }}<br>
-            {{ form.value }}<br>
-            {% for error in form.value.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div>
-            {{ form.submit() }}
-        </div>
-    </form>
-
-    <hr />
-    
-    <h2>Registros</h2>
-    <!-- Lista os registros DNS -->
-    <ul>
-        {% for record in records %}
-            <li>
-                <strong>Type:</strong> {{ record['Type'] }} <br>
-                <strong>Name:</strong> {{ record['Name'] }} <br>
-                <strong>Values:</strong>
-                <ul>
-                    {% for value in record['ResourceRecords'] %}
-                        <li>{{ value['Value'] }}</li>
-                    {% endfor %}
-                </ul>
-                {% if record['Type'] != 'SOA' and record['Type'] != 'NS' %}
-                <br>
-                <form action="/dns/records/delete" method="POST" novalidate>
-                    <input type="hidden" name="zone_id" value="{{ zone_id }}" />
-                    <input type="hidden" name="name" value="{{ record['Name'] }}" />
-                    <input type="hidden" name="record_type" value="{{ record['Type'] }}" />
-                    <input type="submit" value="Deletar" />
-                </form>
-                {% endif %}
-            </li>
+{% block crud_add_form %}
+<h2>Criar Registro</h2>
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.name.label }}<br>
+        {{ form.name }}<br>
+        {% for error in form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
-    </ul>
+    </div>
+    <div>
+        {{ form.record_type.label }}<br>
+        {{ form.record_type }}<br>
+        {% for error in form.record_type.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.value.label }}<br>
+        {{ form.value }}<br>
+        {% for error in form.value.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+{% endblock %}
 
-    <a href="/dns">Voltar para a lista de zonas</a>
+{% block crud_list %}
+<h2>Registros</h2>
+<!-- Lista os registros DNS -->
+<ul>
+    {% for record in records %}
+        <li>
+            <strong>Type:</strong> {{ record['Type'] }} <br>
+            <strong>Name:</strong> {{ record['Name'] }} <br>
+            <strong>Values:</strong>
+            <ul>
+                {% for value in record['ResourceRecords'] %}
+                    <li>{{ value['Value'] }}</li>
+                {% endfor %}
+            </ul>
+            {% if record['Type'] != 'SOA' and record['Type'] != 'NS' %}
+            <br>
+            <form action="/dns/records/delete" method="POST" novalidate>
+                <input type="hidden" name="zone_id" value="{{ zone_id }}" />
+                <input type="hidden" name="name" value="{{ record['Name'] }}" />
+                <input type="hidden" name="record_type" value="{{ record['Type'] }}" />
+                <input type="submit" value="Deletar" />
+            </form>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+<a href="{{ url_for('dns.list_hosted_zones') }}">Voltar para a lista de zonas</a>
 {% endblock %}

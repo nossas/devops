@@ -1,36 +1,35 @@
-{% extends "base.html" %}
+{% extends "auth/crud/base.html" %}
 
-{% block title %}Hosted Zones{% endblock %}
+{% block module_title %}Hosted Zones{% endblock %}
 
-{% block main %}
-    <h1>Hosted Zones</h1>
+{% block crud_add_form %}
+<h2>Create Hosted Zone</h2>
+<!-- Formulário para criar uma nova Hosted Zone -->
+<form action="/dns/create" method="POST">
+    <input type="text" name="zone_name" placeholder="Enter zone name" required>
+    <input type="text" name="external_id" placeholder="Enter external identifier" required>
+    <button type="submit">Create Hosted Zone</button>
+</form>
+{% endblock %}
 
-    <h2>Create Hosted Zone</h2>
-    <!-- Formulário para criar uma nova Hosted Zone -->
-    <form action="/dns/create" method="POST">
-        <input type="text" name="zone_name" placeholder="Enter zone name" required>
-        <input type="text" name="external_id" placeholder="Enter external identifier" required>
-        <button type="submit">Create Hosted Zone</button>
-    </form>
+{% block crud_list %}
+<h2>List Hosted Zones</h2>
+<!-- Formulário para filtrar Hosted Zones por identificador externo -->
+<form action="/dns" method="POST">
+    <input type="text" name="external_id" placeholder="Enter external identifier">
+    <button type="submit">Filter</button>
+</form>
 
-    <hr />
-    <h2>List Hosted Zones</h2>
-    <!-- Formulário para filtrar Hosted Zones por identificador externo -->
-    <form action="/dns" method="POST">
-        <input type="text" name="external_id" placeholder="Enter external identifier">
-        <button type="submit">Filter</button>
-    </form>
-
-    <!-- Lista as Hosted Zones -->
-    <ul>
-        {% for zone in hosted_zones %}
-            <li>
-                <a href="/dns/records/{{ zone['EncodedId'] }}" target="_self">{{ zone['Name'] }} - {{ zone['Id'] }}</a>
-                <!-- Formulário para excluir a Hosted Zone -->
-                <form action="/dns/delete/{{ zone['EncodedId'] }}" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+<!-- Lista as Hosted Zones -->
+<ul>
+    {% for zone in hosted_zones %}
+        <li>
+            <a href="/dns/records/{{ zone['EncodedId'] }}" target="_self">{{ zone['Name'] }} - {{ zone['Id'] }}</a>
+            <!-- Formulário para excluir a Hosted Zone -->
+            <form action="/dns/delete/{{ zone['EncodedId'] }}" method="POST" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
 {% endblock %}

@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
+from flask_login import login_required
 import urllib
 
 from ..forms import RecordSetForm
@@ -9,6 +10,7 @@ dns_routes = Blueprint("dns", __name__, url_prefix="/dns")
 
 
 @dns_routes.route("/", methods=["GET", "POST"])
+@login_required
 def list_hosted_zones():
     """Lista todas as Hosted Zones"""
 
@@ -56,6 +58,7 @@ def list_hosted_zones():
 
 
 @dns_routes.route("records/delete", methods=["POST"])
+@login_required
 def delete_record_set():
     zone_id = request.form.get("zone_id")
     resource_record_set = {
@@ -74,6 +77,7 @@ def delete_record_set():
 
 
 @dns_routes.route("/records/<zone_id>", methods=["GET", "POST"])
+@login_required
 def list_records(zone_id):
     """Lista os registros DNS de uma Hosted Zone"""
     decoded_zone_id = urllib.parse.unquote(zone_id)
@@ -108,6 +112,7 @@ def list_records(zone_id):
 
 
 @dns_routes.route("/create", methods=["POST"])
+@login_required
 def create_hosted_zone():
     """Cria uma nova Hosted Zone"""
     zone_name = request.form["zone_name"]  # Obtém o nome da zona do formulário
@@ -133,6 +138,7 @@ def create_hosted_zone():
 
 
 @dns_routes.route("/delete/<zone_id>", methods=["POST"])
+@login_required
 def delete_hosted_zone(zone_id):
     """Exclui uma Hosted Zone"""
     # Decodifica o ID da zona

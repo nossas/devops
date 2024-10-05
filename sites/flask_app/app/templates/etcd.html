@@ -1,19 +1,45 @@
-{% extends "base.html" %}
+{% extends "auth/crud/base.html" %}
 
-{% block title %}Etcd{% endblock %}
+{% block module_title %}Etcd{% endblock %}
 
-{% block main %}
-    <h1>Etcd</h1>
-
-    <!-- Lista os registros DNS -->
-    <ul>
-        {% for item in items %}
-            <li>
-                <strong>Chave:</strong> {{ item.key }} <br>
-                <strong>Valor:</strong> {{ item.value }} <br>
-            </li>
+{% block crud_add_form %}
+<!-- <h1>Etcd</h1> -->
+<h2>Criar Configuração</h2>
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="mb-3 d-flex flex-column">
+        {{ form.key.label }}
+        {{ form.key }}
+        {% for error in form.key.errors %}
+            <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
-    </ul>
+    </div>
+    <div class="mb-3 d-flex flex-column">
+        {{ form.value.label }}
+        {{ form.value }}
+        {% for error in form.value.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </div>
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+{% endblock %}
 
-    <a href="/dns">Voltar para a lista de zonas</a>
+{% block crud_list %}
+<h2>Lista de configurações</h2>
+<!-- Lista os registros DNS -->
+<ul>
+    {% for item in items %}
+        <li>
+            <strong>Chave:</strong> {{ item.key }} <br>
+            <strong>Valor:</strong> {{ item.value }} <br>
+            <form action="/etcd/delete" method="POST">
+                <input type="hidden" name="key" value="{{ item.key }}" />
+                <input type="submit" value="Deletar" />
+            </form>
+        </li>
+    {% endfor %}
+</ul>
 {% endblock %}

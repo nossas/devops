@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, url_for, redirect, request
-import requests
+from flask_login import login_required
+# import requests
 
 from ..extensions import db
 from ..models import Domain
@@ -14,6 +15,7 @@ main_routes = Blueprint("main", __name__)
 
 
 @main_routes.route("/", methods=["GET", "POST"])
+@login_required
 def index():
     form = DomainForm()
 
