@@ -24,6 +24,7 @@ def index():
             "name": form.name.data,
             "purchase_at": form.purchase_at.data,
             "expired_at": form.expired_at.data,
+            "external_id": form.external_id.data
         }
         new_domain = Domain(**values)
         db.session.add(new_domain)

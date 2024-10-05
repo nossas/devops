@@ -7,6 +7,7 @@ class DomainForm(FlaskForm):
     name = StringField('Nome', validators=[DataRequired(), Length(2, 23)])
     purchase_at = DateField("Comprando em")
     expired_at = DateField("Expira em")
+    external_id = StringField("ID Externo")
     submit = SubmitField("Enviar")
 
 

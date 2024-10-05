@@ -15,6 +15,7 @@ class Domain(db.Model):
     name = db.Column(db.String(26), unique=True, nullable=False)
     purchase_at = db.Column(db.Date, nullable=True)
     expired_at = db.Column(db.Date, nullable=True)
+    external_id = db.Column(db.String(50), nullable=True)
 
     def __repr__(self):
         return f'<Domain {self.name}>'
