@@ -29,3 +29,9 @@ class RecordSetForm(FlaskForm):
     record_type = SelectField("Tipo", choices=DNS_RECORD_TYPES)
     value = TextAreaField("Valor")
     submit = SubmitField("Enviar")
+
+
+class EtcdKeyValueForm(FlaskForm):
+    key = StringField("Chave")
+    value = StringField("Valor")
+    submit = SubmitField("Enviar")

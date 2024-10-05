@@ -5,6 +5,7 @@ from flask_login import login_required
 from ..extensions import db
 from ..models import Domain
 from ..forms import DomainForm
+from ..services.etcd_client import get_service
 from ..services.route53 import (
     check_domain_configuration,
     is_domain_active,
@@ -39,6 +40,7 @@ def index():
                 name=domain.name,
                 is_active=is_domain_active(domain.name),
                 is_route53=check_domain_configuration(domain.name, public_ip=public_ip),
+                traefik_rules=get_service(domain.name)
             )
         )
 
