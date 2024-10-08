@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from flask_login import login_user, logout_user
 
-from ..services.auth import verify_user, User
+from ..services.auth import User
+from ..extensions import bonde_api
 
 
 auth_routes = Blueprint("auth", __name__, url_prefix="/auth")
@@ -13,13 +14,9 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        # Autentica o usuário via API GraphQL
-        first_name, token = verify_user(username, password)
-        if first_name and token:
-            # Armazena na sessão
-            session['token'] = token
-            session['first_name'] = first_name
-            
+        # Autentica o usuário via API GraphQL e armazena na sessão
+        token, first_name = bonde_api.authenticate(username, password)
+        if first_name and token:            
             user = User(token, first_name)
             login_user(user)
 
