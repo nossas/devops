@@ -46,7 +46,7 @@
         <tbody>
             {% for site in sites %}
             <tr>
-                <td><a href="{{ url_for('main.site_detail', site_id=site.id) }}" target="_self">{{ site.name }}</a></td>
+                <td><a href="{{ url_for('dashboard.site_detail', site_id=site.id) }}" target="_self">{{ site.name }}</a></td>
                 <td>{{ site.community.name }}</td>
                 <td>{{ site.created_at.strftime('%d/%m/%Y') }}</td>
                 <td>{{ site.updated_at.strftime('%d/%m/%Y') }}</td>

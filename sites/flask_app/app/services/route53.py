@@ -48,3 +48,23 @@ def get_public_ip():
         return response.text.strip()
     except requests.RequestException:
         return None
+
+
+# def delete_records_by_domain(domain):
+#     """
+#     Listar Registros armazenados ao Route53 e remover eles para que seja possível
+#     """
+#     zone_id = request.form.get("zone_id")
+#     resource_record_set = {
+#         "Name": request.form.get("name"),
+#         "Type": request.form.get("record_type"),
+#     }
+#     response = route53.change_resource_record_sets(
+#         HostedZoneId=zone_id,
+#         ChangeBatch=dict(
+#             Changes=[dict(Action="DELETE", ResourceRecordSet=resource_record_set)]
+#         ),
+#     )
+#     print(response)
+
+#     return redirect(url_for("dns.list_records", zone_id=zone_id.split("/")[-1]))

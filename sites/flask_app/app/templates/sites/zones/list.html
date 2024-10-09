@@ -1,0 +1,106 @@
+{% extends "auth/base.html" %}
+
+{% block module_title %}Hosted Zones{% endblock %}
+
+{% block content %}
+<h2>List Hosted Zones</h2>
+<div class="bg-light p-5">
+    {% if domain.has_manage_dns %}
+    <p>
+        Você pode configurar seus endereçamentos abaixo, lembre-se que para apontar para os nossos
+        serviços você precisa criar um registro do tipo <strong>A</strong> apontando para o IP <strong>{{ public_ip }}</strong>
+    </p>
+    <form class="d-flex flex-column" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="mb-3 col-12">
+                {{ form.name.label }}<br>
+                {{ form.name }}<br>
+                {% for error in form.name.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3 col-12">
+                {{ form.record_type.label }}<br>
+                {{ form.record_type }}<br>
+                {% for error in form.record_type.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3 col-12">
+                {{ form.value.label }}<br>
+                {{ form.value }}<br>
+                {% for error in form.value.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div class="mb-3 col-12">
+                <button class="btn btn-primary" type="submit">Criar registro</button>
+            </div>
+        </div>
+    </form>
+    {% else %}
+    <p>
+        Seu domínio não é gerenciado pela nossa plataforma de DNS, então você deve garantir que
+        seu domínio tem um registro do tipo <strong>A</strong> apontando para o IP <strong>{{ public_ip }}</strong>
+    </p>
+    {% endif %}
+    <!-- Formulário para filtrar Hosted Zones por identificador externo -->
+    <!-- <form class="d-flex flex-column" action="/dns/create" method="POST">
+        <div class="row">
+            <div class="mb-3 col-12">
+                <input type="text" name="zone_name" placeholder="Enter zone name" required>
+            </div>
+            <div class="mb-3 col-12">
+                <input type="text" name="external_id" placeholder="Enter external identifier" required>                
+            </div>
+            <div class="mb-3 col-12">
+                <button class="btn btn-primary" type="submit">{{ title }}</button>
+            </div>
+        </div>
+    </form> -->
+</div>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Tipo</th>
+                <th>Nome</th>
+                <th>Valor</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>
+                    {{ record['Type'] }}
+                </td>
+                <td>
+                    {{ record['Name'] }}
+                </td>
+                <td>
+                    <ul>
+                        {% for value in record['ResourceRecords'] %}
+                            <li>{{ value['Value'] }}</li>
+                        {% endfor %}
+                    </ul>
+
+                </td>
+                <td>
+                    {% if record['Type'] != 'SOA' and record['Type'] != 'NS' %}
+                    <br>
+                    <form action="{{ url_for('dns.delete_record_set') }}" method="POST" novalidate>
+                        <input type="hidden" name="zone_id" value="{{ zone_id }}" />
+                        <input type="hidden" name="name" value="{{ record['Name'] }}" />
+                        <input type="hidden" name="record_type" value="{{ record['Type'] }}" />
+                        <input type="submit" value="Deletar" />
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

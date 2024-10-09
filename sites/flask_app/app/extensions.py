@@ -83,6 +83,29 @@ class BondeAPIExtension:
 
         return []
 
+    def get_community_by_id(self, id):
+        headers = self.get_headers()
+        cookies = self.get_cookies()
+        query = """
+        query {
+            communities_by_pk(id: 10) {
+                id
+                name
+            }
+        }
+        """
+        response = requests.post(
+            self.api_url, json={"query": query}, cookies=cookies, headers=headers
+        )
+
+        if response.status_code == 200:
+            response_json = response.json()
+            if "data" in response_json:
+                community = response_json["data"]["communities_by_pk"]
+                return community
+
+        return None
+
 
 db = SQLAlchemy()
 

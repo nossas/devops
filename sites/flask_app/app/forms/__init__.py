@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DateField, SelectField, TextAreaField
+from wtforms import StringField, SubmitField, DateField, SelectField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired, Length
 
 from ..extensions import bonde_api
@@ -9,13 +9,7 @@ class DomainForm(FlaskForm):
     name = StringField('Nome', validators=[DataRequired(), Length(2, 23)])
     purchase_at = DateField("Comprando em")
     expired_at = DateField("Expira em")
-    external_id = SelectField("ID Externo")
-    submit = SubmitField("Enviar")
-
-    def __init__(self):
-        super().__init__()
-
-        self.external_id.choices = bonde_api.get_communities()
+    has_manage_dns = BooleanField("Tem gerenciamento de DNS?", default=True)
 
 
 DNS_RECORD_TYPES = [
@@ -42,3 +36,13 @@ class EtcdKeyValueForm(FlaskForm):
     key = StringField("Chave")
     value = StringField("Valor")
     submit = SubmitField("Enviar")
+
+
+class SiteForm(FlaskForm):
+    name = StringField('Nome', validators=[DataRequired(), Length(2, 23)])
+    community_id = SelectField("Comunidade")
+
+    def __init__(self):
+        super().__init__()
+
+        self.community_id.choices = bonde_api.get_communities()

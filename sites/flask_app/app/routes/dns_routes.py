@@ -2,8 +2,15 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 import urllib
 
+from ..extensions import db
+from ..models import Domain
 from ..forms import RecordSetForm
-from ..services.route53 import route53, check_domain_configuration, is_domain_active
+from ..services.route53 import (
+    route53,
+    check_domain_configuration,
+    is_domain_active,
+    get_public_ip,
+)
 
 
 dns_routes = Blueprint("dns", __name__, url_prefix="/dns")
@@ -149,3 +156,85 @@ def delete_hosted_zone(zone_id):
     route53.delete_hosted_zone(Id=full_zone_id)
 
     return redirect(url_for("dns.list_hosted_zones"))
+
+
+@dns_routes.route("/<external_id>", methods=["GET", "POST"])
+@login_required
+def list_hosted_zones_by_external_id(external_id):
+    """Lista todas as Hosted Zones por External ID"""
+    zone = None
+    domain = Domain.query.get(external_id)
+
+    if domain.has_manage_dns:
+        if not domain.hosted_zone_id:
+            # Obtém todas as Hosted Zones
+            response = route53.list_hosted_zones()
+            hosted_zones = response.get("HostedZones", [])
+
+            # Lista de Hosted Zones que correspondem ao identificador externo
+            for zone in hosted_zones:
+                zone_id = zone["Id"].split("/")[-1]  # Apenas a parte final do ID
+                # context.update({ "zone_id": zone_id })
+
+                # Obtém as tags da zona
+                tags_response = route53.list_tags_for_resource(
+                    ResourceType="hostedzone", ResourceId=zone_id
+                )
+                tags = tags_response.get("ResourceTagSet", {}).get("Tags", [])
+
+                # Verifica se a tag 'ExternalIdentifier' corresponde ao valor fornecido
+                for tag in tags:
+                    if tag["Key"] == "ExternalIdentifier" and tag["Value"] == str(
+                        domain.id
+                    ):
+                        # Salva o hosted_zone_id caso ainda não tenha sido registro, mas a
+                        # tag esteja no Route53
+                        domain.hosted_zone_id = zone["Id"]
+                        db.session.commit()
+                        break
+
+        # Inicia o contexto da página
+        context = {"public_ip": get_public_ip(), "domain": domain}
+
+        # Valida o formulário caso tenham retato criar um novo registro
+        form = RecordSetForm()
+        if form.validate_on_submit():
+            resource_record_set = {
+                "Name": form.name.data,
+                "Type": form.record_type.data,
+                "ResourceRecords": [
+                    {"Value": value} for value in form.value.data.split(",")
+                ],
+            }
+            response = route53.change_resource_record_sets(
+                HostedZoneId=domain.hosted_zone_id,
+                ChangeBatch=dict(
+                    Changes=[
+                        dict(Action="CREATE", ResourceRecordSet=resource_record_set)
+                    ]
+                ),
+            )
+            print(response)
+            return redirect(url_for("dns.list_hosted_zones_by_external_id", external_id=domain.id))
+        
+        # Adiciona o formulário ao contexto
+        context.update({"form": form})
+
+        # Busca pelos registros relacionados e adiciona ao contexto
+        response = route53.list_resource_record_sets(HostedZoneId=domain.hosted_zone_id)
+        records = response.get("ResourceRecordSets", [])
+        context.update({"records": records})
+
+    return render_template("sites/zones/list.html", **context)
+
+    # response = route53.list_hosted_zones()
+    # hosted_zones = response.get("HostedZones", [])
+
+    # # # Codificar o ID das zonas para serem usados na URL
+    # # for zone in hosted_zones:
+    # #     zone_id = zone["Id"].split("/")[-1]  # Pega apenas a parte final do ID
+    # #     zone["EncodedId"] = urllib.parse.quote(
+    # #         zone_id
+    # #     )  # Codifica o ID sem a parte '/hostedzone/'
+
+    # # return render_template("zones.html", hosted_zones=hosted_zones)

@@ -7,6 +7,7 @@ from .routes.main_routes import main_routes
 from .routes.dns_routes import dns_routes
 from .routes.etcd_routes import etcd_routes
 from .routes.docker_routes import docker_routes
+from .routes.dashboard import dashboard
 
 from .config import Config
 
@@ -23,6 +24,7 @@ def create_app():
     migrate = Migrate(app, db)
 
     # Registra blueprints (rotas)
+    app.register_blueprint(dashboard)
     app.register_blueprint(auth_routes)
     app.register_blueprint(main_routes)
     app.register_blueprint(dns_routes)
