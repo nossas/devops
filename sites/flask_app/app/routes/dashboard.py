@@ -4,7 +4,7 @@ from flask_login import login_required
 from ..extensions import db
 from ..forms import SiteForm, DomainForm, RecordSetForm
 from ..models import Site, Domain
-from ..services.route53 import route53, get_public_ip
+from ..services.route53 import route53, get_public_ip, is_domain_active, check_domain_configuration
 
 
 dashboard = Blueprint("dashboard", __name__)
@@ -91,11 +91,27 @@ def site_detail(site_id):
         # Carregando novamente a Listagem de Domínios.
         return redirect(url_for("dashboard.site_detail", site_id=site_id))
 
+    # Acrescenta informações de verificação do status
+    public_ip = get_public_ip()
+    domains = []
+    for domain in Domain.query.filter_by(site_id=site.id):
+        domains.append(dict(
+            id=domain.id,
+            name=domain.name,
+            has_manage_dns=domain.has_manage_dns,
+            site=domain.site,
+            site_id=domain.site_id,
+            purchase_at=domain.purchase_at,
+            expired_at=domain.expired_at,
+            is_domain_active=is_domain_active(domain.name),
+            is_route53_active=check_domain_configuration(domain.name, public_ip)
+        ))
+
     # Renderiza o template com a Listagem de Domínios por Site
     return render_template(
         "dashboard/site_detail.html",
         site=site,
-        domains=Domain.query.filter_by(site_id=site.id),
+        domains=domains,
         form=form,
     )
 

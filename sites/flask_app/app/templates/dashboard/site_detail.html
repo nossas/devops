@@ -47,6 +47,8 @@
                 <th>Domínio</th>
                 <th>Comprado em</th>
                 <th>Expira em</th>
+                <th>Endereço Ativo?</th>
+                <th>Route53 configurado?</th>
                 <th>Ação</th>
             </tr>
         </thead>
@@ -56,6 +58,32 @@
                 <td><a href="{{ url_for('dashboard.domain_detail', domain_id=domain.id) }}" target="_self">{{ domain.name }}</a></td>
                 <td>{{ domain.purchase_at.strftime('%d/%m/%Y') }}</td>
                 <td>{{ domain.expired_at.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <div class="d-flex justify-content-center">
+                        {% if not domain.is_domain_active %}
+                        <span class="p-2 bg-danger rounded-circle">
+                            <span class="visually-hidden">Invativo</span>
+                        </span>
+                        {% else %}
+                        <span class="p-2 bg-success rounded-circle">
+                            <span class="visually-hidden">Ativo</span>
+                        </span>
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-center">
+                        {% if not domain.is_route53_active %}
+                        <span class="p-2 bg-danger rounded-circle">
+                            <span class="visually-hidden">Invativo</span>
+                        </span>
+                        {% else %}
+                        <span class="p-2 bg-success rounded-circle">
+                            <span class="visually-hidden">Ativo</span>
+                        </span>
+                        {% endif %}
+                    </div>
+                </td>
                 <td>
                     <form action="{{ url_for('dashboard.domain_delete', domain_id=domain.id) }}" method="POST">
                         <input class="btn btn-danger" type="submit" value="Deletar" />
