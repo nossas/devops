@@ -30,7 +30,7 @@ services:
       - etcd
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./letsencrypt:/letsencrypt"
+      - "./data/letsencrypt:/letsencrypt"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
@@ -44,7 +44,7 @@ services:
       - ETCD_ENABLE_V2=true
       - ETCDCTL_API=3
     volumes:
-      - ./etcd:/bitnami/etcd
+      - ./data/etcd:/bitnami/etcd
     ports:
       - "2379:2379"
       - "2380:2380"
@@ -60,6 +60,7 @@ services:
   bonde:
     image: "nossas/bonde-clients:feature-phone-widget"
     platform: linux/amd64
+    privileged: true
     container_name: "bonde"
     command: pnpm --filter webpage-client start
     labels:
@@ -80,6 +81,7 @@ services:
   cms:
     image: "nossas/cms:latest"
     platform: linux/amd64
+    privileged: true
     container_name: "cms"
     labels:
       - "traefik.enable=true"

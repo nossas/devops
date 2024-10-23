@@ -11,23 +11,4 @@ services:
       - DEBUG=1
       # - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}  # Se estiver usando LocalStack Pro (opcional)
     volumes:
-      - "./localstack:/var/lib/localstack"
-  
-  app:
-    build:
-      context: flask_app/
-      dockerfile: Dockerfile
-    platform: linux/amd64
-    container_name: "app"
-    # Configura Extra Hosts para testar com domínios locais
-    extra_hosts:
-      - "mydomain.devel:172.17.0.1"
-    depends_on:
-      - localstack
-      - etcd
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.app.loadbalancer.server.port=5000"
-    volumes:
-      - ./flask_app:/app
-      - /var/run/docker.sock:/var/run/docker.sock
+      - "./data/localstack:/var/lib/localstack"
