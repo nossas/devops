@@ -13,59 +13,33 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_key_pair" "devops_key_pair" {
-  key_name   = "devops-host"
-  public_key = file("~/.ssh/id_rsa.pub")
+# Módulo para o servidor web
+module "legacy_server" {
+  source            = "./modules/legacy_server"
+  ami               = var.ami
+  instance_type     = var.legacy_server_instance_type
+  env               = var.env
+  key_name          = var.key_name
+  private_key_path  = var.private_key_path
+  monitoring_files_path = "./monitoring"
 }
 
-resource "aws_instance" "legacy_server" {
-  ami           = "ami-0866a3c8686eaeeba"
-  instance_type = "t2.micro"
-
-  key_name = aws_key_pair.devops_key_pair.key_name
-
-  tags = {
-    Name = "legacy-server"
-  }
-
-  provisioner "file" {
-    # Copia arquivos para configuração do monitoramento
-    source      = "./monitoring"
-    destination = "/home/ubuntu/monitoring"
-
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("~/.ssh/id_rsa")
-      host        = self.public_ip
-    }
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update -y",
-      "sudo apt-get install -y docker.io",
-      "sudo systemctl start docker",
-      "sudo systemctl enable docker",
-      "sudo usermod -aG docker ubuntu",
-      # Altera o hostname antes de instalar o telegraf  
-      "sudo hostnamectl set-hostname --transient --static legacy-server",
-      # Inicia a configuração do monitoramento
-      "cd /home/ubuntu/monitoring/",
-      "sudo chmod +x install-telegraf.sh",
-      "sudo ./install-telegraf.sh"
-    ]
-
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("~/.ssh/id_rsa")
-      host        = self.public_ip
-    }
-  }
+module "sites_server" {
+  source            = "./modules/sites_server"
+  ami               = var.ami
+  instance_type     = var.sites_server_instance_type
+  env               = var.env
+  key_name          = var.key_name
+  private_key_path  = var.private_key_path
+  monitoring_files_path = "./monitoring"
 }
 
-output "instance_public_ip" {
-  value       = aws_instance.legacy_server.public_ip
-  description = "Endereço IP público da instância"
-}
+# Módulo para o servidor de banco de dados
+# module "db_server" {
+#   source             = "./modules/db_server"
+#   ami_id             = var.db_server_ami_id
+#   instance_type      = var.db_server_instance_type
+#   key_name           = var.key_name
+#   instance_name      = "db-server-${var.env}"
+#   private_key_path   = var.private_key_path
+# }
