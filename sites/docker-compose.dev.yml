@@ -1,0 +1,14 @@
+services:
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - "4566:4566"  # Porta para a API universal do LocalStack
+      - "4575:4575"  # Porta para o Route53
+    environment:
+      - SERVICES=route53  # Define quais serviços do AWS serão simulados
+      - DEBUG=1
+      # - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}  # Se estiver usando LocalStack Pro (opcional)
+    volumes:
+      - "./data/localstack:/var/lib/localstack"
