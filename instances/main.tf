@@ -7,10 +7,21 @@ terraform {
   }
 
   required_version = ">= 1.2.0"
+
+  backend "s3" {
+    # Replace this with your bucket name!
+    bucket         = "bonde-terraform-up-and-running-state"
+    key            = "global/s3/terraform.tfstate"
+    region         = "us-east-1"
+
+    # Replace this with your DynamoDB table name!
+    dynamodb_table = "terraform-up-and-running-locks"
+    encrypt        = true
+  }
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region    = "us-east-1"
 }
 
 # Módulo para o servidor web
