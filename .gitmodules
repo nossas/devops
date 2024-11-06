@@ -1,0 +1,3 @@
+[submodule "instances/monitoring"]
+	path = instances/monitoring
+	url = git@github.com:nossas/monitoramento.git
