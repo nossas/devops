@@ -1,9 +1,8 @@
-# resource "aws_key_pair" "devops_key_pair" {
-#   key_name   = "devops-host"
-#   public_key = file("~/.ssh/id_rsa.pub")
-# }
+# Define um formato de instância genérica para criar novas instâncias monitoradas
+# e habilitadas para implantar arquiteturas baseadas em Docker.
 
-resource "aws_instance" "common_instance" {
+resource "aws_instance" "server" {
+  # Sistema operacional na Amazon
   ami           = var.ami
   instance_type = var.instance_type
 
@@ -33,7 +32,7 @@ resource "aws_instance" "common_instance" {
       "sudo systemctl start docker",
       "sudo systemctl enable docker",
       "sudo usermod -aG docker ubuntu",
-      # Altera o hostname antes de instalar o telegraf  
+      # Altera o hostname antes de instalar o telegraf
       "sudo hostnamectl set-hostname --transient --static ${var.instance_name}",
       # Inicia a configuração do monitoramento
       "cd /home/ubuntu/monitoring/",
