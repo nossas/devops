@@ -53,6 +53,7 @@ module "legacy_server" {
   key_name          = local.key_name
   private_key_path  = local.private_key_path
   monitoring_files_path = "./monitoring"
+  influxdb_token    = var.influxdb_token
 }
 
 module "sites_server" {
@@ -63,4 +64,5 @@ module "sites_server" {
   key_name          = local.key_name
   private_key_path  = local.private_key_path
   monitoring_files_path = "./monitoring"
+  influxdb_token    = var.influxdb_token
 }

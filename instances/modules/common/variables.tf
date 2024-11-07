@@ -27,3 +27,9 @@ variable "monitoring_files_path" {
     description = "Caminho para arquivos de instalação do monitoramento"
     type        = string
 }
+
+variable "influxdb_token" {
+    description = "Chave utilizada para o telegraf enviar dados ao Influxdb"
+    type        = string
+    sensitive   = true
+}
