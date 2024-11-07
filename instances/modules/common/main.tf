@@ -6,6 +6,7 @@ resource "aws_instance" "server" {
   ami           = var.ami
   instance_type = var.instance_type
 
+  # Nome da chave existente na Amazon, você deve ter o par da chave na sua máquina
   key_name = var.key_name
 
   tags = {

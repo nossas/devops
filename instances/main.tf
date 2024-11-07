@@ -24,23 +24,43 @@ provider "aws" {
   region    = "us-east-1"
 }
 
+locals {
+  # Tipo de imagem para o servidor legado (APIS e Clientes Bonde)
+  ami                         = "ami-0866a3c8686eaeeba"
+
+  # Nome da chave SSH
+  key_name                    = "custom-host"
+
+  # Caminho para a chave privada SSH
+  private_key_path            = "~/.ssh/ailton-krenak.pem"
+
+  # Ambiente (dev, staging, production)
+  env                         = terraform.workspace
+
+  # Tipo de instância para o servidor legado (APIS e Clientes Bonde)
+  legacy_server_instance_type = terraform.workspace == "stage" ? "t3.small" : "t3.micro"
+
+  # Tipo de instância para o servidor de sites (Bonde Público e CMS)
+  sites_server_instance_type  = terraform.workspace == "stage" ? "t3.micro" : "t2.micro"
+}
+
 # Módulo para o servidor web
 module "legacy_server" {
   source            = "./modules/common"
-  ami               = var.ami
-  instance_type     = var.legacy_server_instance_type
-  instance_name     = "legacy-server-${var.env}"
-  key_name          = var.key_name
-  private_key_path  = var.private_key_path
+  ami               = local.ami
+  instance_type     = local.legacy_server_instance_type
+  instance_name     = "legacy-server-${local.env}"
+  key_name          = local.key_name
+  private_key_path  = local.private_key_path
   monitoring_files_path = "./monitoring"
 }
 
 module "sites_server" {
   source            = "./modules/common"
-  ami               = var.ami
-  instance_type     = var.sites_server_instance_type
-  instance_name     = "sites-server-${var.env}"
-  key_name          = var.key_name
-  private_key_path  = var.private_key_path
+  ami               = local.ami
+  instance_type     = local.sites_server_instance_type
+  instance_name     = "sites-server-${local.env}"
+  key_name          = local.key_name
+  private_key_path  = local.private_key_path
   monitoring_files_path = "./monitoring"
 }
