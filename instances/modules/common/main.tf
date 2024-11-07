@@ -36,7 +36,8 @@ resource "aws_instance" "server" {
       # Altera o hostname antes de instalar o telegraf
       "sudo hostnamectl set-hostname --transient --static ${var.instance_name}",
       # Configura a variável que será usada no telegraf
-      "echo 'export INFLUXDB_TOKEN=\"${var.influxdb_token}\"' >> /etc/profile.d/influxdb_token.sh",
+      "export INFLUXDB_TOKEN=${var.influxdb_token}",
+      "echo 'export INFLUXDB_TOKEN=${var.influxdb_token}' >> ~/.bashrc",
       # Inicia a configuração do monitoramento
       "cd /home/ubuntu/monitoring/",
       "sudo chmod +x install-telegraf.sh",
