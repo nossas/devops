@@ -21,6 +21,10 @@ jobs:
     # Confira o repositório para o GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        submodules: true  # Clona os submódulos junto com o repositório principal
+        fetch-depth: 0    # Garante que o histórico completo seja baixado, necessário para alguns submódulos
+        token: ${{ secrets.GITHUB_TOKEN }} # Usa o token para acessar submódulos privados
 
     - name: Setup SSH key
       env:
