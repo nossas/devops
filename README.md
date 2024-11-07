@@ -1,3 +1,16 @@
+## Como desenvolver
+
+Instale a aws-cli:
+
+```bash
+```
+
+Instale o terraform:
+
+```bash
+```
+
+
 ## Instancias
 
 Tecnologia: terraform
@@ -25,5 +38,9 @@ Essa sequência de comandos acima irá criar a infraestrutura não persistente r
 
 ## TODO
 
-- Persistir o estado no S3
-- Criar fluxo de trabalho para publicação automatizada no Github
+- [X] Persistir o estado no S3 e lock com DynamoDB
+- [ ] Criar fluxo de trabalho para publicação automatizada no Github
+- [X] Resolver caminho da chave privada
+- [ ] Documentar o uso do workspace
+- [ ] Documentar o uso da chave privada `custom-host / ailton-krenak`
+- [ ] Configuração da awscli e terraform e das variaveis de ambiente que precisam ser configuradas para acessar a conta AWS
