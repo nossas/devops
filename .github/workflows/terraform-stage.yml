@@ -33,25 +33,33 @@ jobs:
     # Como estamos publicando uma infraestrutura na AWS é necessário garantir
     # a configuração dos secrets AWS_ACCESS_KEY_ID e AWS_SECRET_ACCESS_KEY no repositório do Github.
     - name: Terraform Initialize
+      working-directory: ./instances
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform init
 
     - name: Terraform Validate
+      working-directory: ./instances
       run: terraform validate
 
     # Define que iremos trabalhar no ambiente de stage
     - name: Terraform Select Workspace
+      working-directory: ./instances
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform workspace select stage
 
     - name: Terraform Plan
+      working-directory: ./instances
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform plan
 
     - name: Terraform Apply
+      working-directory: ./instances
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
