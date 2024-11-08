@@ -20,6 +20,7 @@ services:
       - "--ping"
       - "--api.insecure=true"
       - "--providers.docker=true"
+      - "--providers.docker.watch=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.defaultRule=Host(`{{ index .Labels \"com.docker.compose.service\"}}.${TRAEFIK_DEFAULT_DOMAIN_RULE:-bonde.devel}`)"
       - "--entrypoints.web.address=:80"
