@@ -43,8 +43,6 @@ services:
       - "80:80"
       - "443:443"
       # - "8080:8080"
-    networks:
-      - web
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "letsencrypt:/letsencrypt"
@@ -74,5 +72,6 @@ volumes:
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
-  web:
-    driver: bridge
+  default:
+    # Padronizar o nome da rede com o nome do domínio
+    name: web
