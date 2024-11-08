@@ -53,3 +53,9 @@ resource "aws_instance" "server" {
     }
   }
 }
+
+resource "aws_eip_association" "eip_assoc" {
+  count         = var.elastic_ip_allocation_id != "" ? 1 : 0
+  instance_id   = aws_instance.server.id
+  allocation_id = var.elastic_ip_allocation_id
+}

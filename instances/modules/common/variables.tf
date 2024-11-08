@@ -33,3 +33,9 @@ variable "influxdb_token" {
     type        = string
     sensitive   = true
 }
+
+variable "elastic_ip_allocation_id" {
+    description = "ID da alocação de um IP Elástico da AWS"
+    type        = string
+    default     = ""
+}
