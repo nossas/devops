@@ -1,0 +1,30 @@
+services:
+  api-accounts:
+    image: ${DOCKER_IMAGE:-nossas/bonde-apis:hotfix-domain-traefik-rules}
+    environment:
+      ACCOUNTS_REGISTER_URL: https://accounts.${DEFAULT_DOMAIN_RULE}/register
+      GRAPHQL_HTTP_URL: ${HASURA_API:-http://api-graphql.bonde.devel/v1/graphql}
+      APP_DOMAIN: ${DEFAULT_DOMAIN_RULE}
+      HASURA_SECRET: ${HASURA_SECRET}
+      HOST: 0.0.0.0
+      JWT_SECRET: ${JWT_SECRET:-segredo123}
+      LOG_LEVEL: debug
+      PORT: '4001'
+    command:
+      - pnpm
+      - --filter
+      - accounts-api
+      - start
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    pull_policy: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.api-accounts.loadbalancer.server.port=4001
+      - traefik.http.routers.api-accounts.tls=true
+      - traefik.http.routers.api-accounts.tls.certresolver=myresolver
+
+# Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
+networks:
+  default:
+    # Padronizar o nome da rede com o nome do domínio
+    name: legacy
