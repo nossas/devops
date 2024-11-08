@@ -17,6 +17,8 @@ services:
       - start
     restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     pull_policy: always
+    networks:
+      - web
     labels:
       - traefik.enable=true
       - traefik.http.services.api-accounts.loadbalancer.server.port=4001
@@ -25,6 +27,5 @@ services:
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
-  default:
-    # Padronizar o nome da rede com o nome do domínio
-    name: legacy
+  web:
+    driver: bridge
