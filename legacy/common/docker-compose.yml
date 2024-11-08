@@ -27,7 +27,7 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.websecure.http.middlewares=securityHeader@etcd"
+      # - "--entrypoints.websecure.http.middlewares=securityHeader@etcd"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_DEFAULT_EMAIL_ACME:-tech@bonde.devel}"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
