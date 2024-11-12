@@ -39,3 +39,14 @@ variable "elastic_ip_allocation_id" {
     type        = string
     default     = ""
 }
+
+variable "portainer_edge_id" {
+    description = "ID do ambiente no Portainer"
+    type        = string
+}
+
+variable "portainer_edge_key" {
+    description = "Chave Secreta do ambiente no Portainer"
+    type        = string
+    sensitive   = true
+}

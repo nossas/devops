@@ -29,3 +29,14 @@ variable "sites_server_instance_type" {
     type        = string
     default     = "t3.micro"
 }
+
+variable "legacy_portainer_edge_id" {
+    description = "ID do ambiente no Portainer"
+    type        = string
+}
+
+variable "legacy_portainer_edge_key" {
+    description = "Chave Secreta do ambiente no Portainer"
+    type        = string
+    sensitive   = true
+}

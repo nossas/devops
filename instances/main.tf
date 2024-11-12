@@ -46,6 +46,8 @@ module "legacy_server" {
   monitoring_files_path     = "./monitoring"
   influxdb_token            = var.influxdb_token
   elastic_ip_allocation_id  = var.legacy_elastic_ip_allocation_id
+  portainer_edge_id         = var.legacy_portainer_edge_id
+  portainer_edge_key        = var.legacy_portainer_edge_key
 }
 
 # module "sites_server" {
