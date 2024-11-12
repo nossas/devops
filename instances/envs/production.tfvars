@@ -1,0 +1,6 @@
+legacy_server_instance_type="t2.micro"
+sites_server_instance_type="t3.micro"
+ami="ami-0866a3c8686eaeeba"
+env="production"
+key_name="custom-host"
+private_key_path="~/Repositories/nossas/keys/ailton-krenak.pem"
