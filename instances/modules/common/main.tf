@@ -13,6 +13,11 @@ resource "aws_instance" "server" {
     Name = var.instance_name
   }
 
+  root_block_device {
+    # Aumente para o tamanho necessário em GB
+    volume_size = var.volume_size
+  }
+
   provisioner "file" {
     # Copia arquivos para configuração do monitoramento
     source      = var.monitoring_files_path

@@ -50,3 +50,8 @@ variable "portainer_edge_key" {
     type        = string
     sensitive   = true
 }
+
+variable "volume_size" {
+    description = "Tamanho em GB do volume da instância"
+    type        = number
+}

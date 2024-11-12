@@ -41,6 +41,7 @@ module "legacy_server" {
   ami                       = var.ami
   instance_type             = var.legacy_server_instance_type
   instance_name             = "legacy-server-${local.env}"
+  volume_size               = terraform.workspace == "prod" ? 100 : 30 
   key_name                  = local.key_name
   private_key_path          = local.private_key_path
   monitoring_files_path     = "./monitoring"
