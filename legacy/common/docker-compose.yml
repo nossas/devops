@@ -88,17 +88,18 @@ services:
       - API_REDES_URL=${HASURA_REMOTE_SCHEMA_API_REDES_URL:-http://api-redes.bonde.devel}
       - N8N_WEBHOOK_URL=${HASURA_N8N_WEBHOOK_URL:-http://n8n.bonde.devel/webhook}
       - PORT=8080
-    labels:
-      - traefik.http.services.api-graphql.loadbalancer.server.port=8080
-      - traefik.enable=true
-      - traefik.http.routers.api-graphql.tls=true
-      - traefik.http.routers.api-graphql.tls.certresolver=myresolver
     restart: always
     pull_policy: always
     logging:
       driver: "json-file"
       options:
         max-size: "5120m"
+    labels:
+      - traefik.http.services.api-graphql.loadbalancer.server.port=8080
+      - traefik.enable=true
+      - traefik.http.routers.api-graphql.tls=true
+      - traefik.http.routers.api-graphql.tls.certresolver=myresolver
+      - traefik.http.routers.api-graphql.rule=Host(`api-graphql.${DEFAULT_DOMAIN_RULE}`)
 
 volumes:
   letsencrypt:
