@@ -66,6 +66,40 @@ services:
       - traefik.http.routers.traefik.tls=true
       - traefik.http.routers.traefik.tls.certresolver=myresolver
 
+  api-graphql:
+    image: hasura/graphql-engine:v2.44.0
+    environment:
+      - HASURA_GRAPHQL_DATABASE_URL=${HASURA_GRAPHQL_DATABASE_URL:-postgres://user:pass@postgres:5432/bonde}
+      - HASURA_GRAPHQL_VOTEPELOCLIMA_DATABASE_URL=${HASURA_GRAPHQL_VOTEPELOCLIMA_DATABASE_URL:-postgres://user:pass@postgres:5432/votepeloclima}
+      - HASURA_GRAPHQL_ENABLE_CONSOLE=${HASURA_GRAPHQL_ENABLE_CONSOLE:-'false'}
+      - HASURA_GRAPHQL_ADMIN_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET:-segredo123}
+      - HASURA_GRAPHQL_JWT_SECRET=${HASURA_GRAPHQL_JWT_SECRET}
+      - HASURA_GRAPHQL_UNAUTHORIZED_ROLE=anonymous
+      - HASURA_GRAPHQL_ENABLED_LOG_TYPES=startup,query-log,http-log,webhook-log,websocket-log
+      - HASURA_GRAPHQL_LOG_LEVEL=${HASURA_GRAPHQL_LOG_LEVEL:-debug}
+      - HASURA_GRAPHQL_CORS_DOMAIN=${HASURA_GRAPHQL_CORS_DOMAIN:-*}
+      - HASURA_GRAPHQL_INFER_FUNCTION_PERMISSIONS=false
+      # Remote schemas
+      - API_ACCOUNTS_URL=${HASURA_REMOTE_SCHEMA_API_ACCOUNTS_URL:-http://api-accounts.bonde.devel}
+      - API_ACTIVISTS_URL=${HASURA_REMOTE_SCHEMA_API_ACTIVISTS_URL:-http://activists.bonde.devel}
+      - API_DOMAINS_URL=${HASURA_REMOTE_SCHEMA_API_DOMAINS_URL:-http://api-domains.bonde.devel}
+      - API_NOTIFICATIONS_URL=${HASURA_REMOTE_SCHEMA_API_NOTIFICATIONS_URL:-http://notifications.bonde.devel}
+      - API_PAYMENTS_URL=${HASURA_REMOTE_SCHEMA_API_PAYMENTS_URL:-http://api-payments.bonde.devel}
+      - API_REDES_URL=${HASURA_REMOTE_SCHEMA_API_REDES_URL:-http://api-redes.bonde.devel}
+      - N8N_WEBHOOK_URL=${HASURA_N8N_WEBHOOK_URL:-http://n8n.bonde.devel/webhook}
+      - PORT=8080
+    labels:
+      - traefik.http.services.api-graphql.loadbalancer.server.port=8080
+      - traefik.enable=true
+      - traefik.http.routers.api-graphql.tls=true
+      - traefik.http.routers.api-graphql.tls.certresolver=myresolver
+    restart: always
+    pull_policy: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5120m"
+
 volumes:
   letsencrypt:
     driver: local
