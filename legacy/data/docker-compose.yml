@@ -15,7 +15,7 @@ services:
       - traefik.http.services.metabase.loadbalancer.server.port=3000
       - traefik.http.routers.metabase.tls=true
       - traefik.http.routers.metabase.tls.certresolver=myresolver
-      # - traefik.http.routers.metabase.rule=Host(`metabase.${DEFAULT_DOMAIN_RULE}`)
+      - traefik.http.routers.metabase.rule=Host(`metabase.${DEFAULT_DOMAIN_RULE}`)
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
