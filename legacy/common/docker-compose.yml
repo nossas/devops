@@ -134,11 +134,11 @@ services:
       - WEB_CONCURRENCY=2
       - WEB_MEMORY=1024
     labels:
-      - traefik.http.services.api-rest.loadbalancer.server.port=3000
       - traefik.enable=true
+      - traefik.http.services.api-rest.loadbalancer.server.port=3000
       - traefik.http.routers.api-rest.tls=true
       - traefik.http.routers.api-rest.tls.certresolver=myresolver
-      # - traefik.http.routers.n8n.rule=Host(`n8n.${DEFAULT_DOMAIN_RULE}`)
+      - traefik.http.routers.api-rest.rule=Host(`api-rest.${DEFAULT_DOMAIN_RULE}`)
 
   n8n:
     image: n8nio/n8n:1.66.0
