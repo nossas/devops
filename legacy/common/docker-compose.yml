@@ -47,9 +47,9 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "letsencrypt:/letsencrypt"
     environment:
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-xxxxxxx}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-xxxxxx}
-      AWS_REGION: ${AWS_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-xxxxxxx}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-xxxxxx}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
     labels:
       - traefik.enable=true
       # global redirection: https (www.) to https
@@ -69,8 +69,8 @@ services:
   api-graphql:
     image: hasura/graphql-engine:v2.44.0
     environment:
-      - HASURA_GRAPHQL_DATABASE_URL=${HASURA_GRAPHQL_DATABASE_URL:-postgres://user:pass@postgres:5432/bonde}
-      - HASURA_GRAPHQL_VOTEPELOCLIMA_DATABASE_URL=${HASURA_GRAPHQL_VOTEPELOCLIMA_DATABASE_URL:-postgres://user:pass@postgres:5432/votepeloclima}
+      - HASURA_GRAPHQL_DATABASE_URL=${BONDE_DATABASE_URL:-postgres://user:pass@postgres:5432/bonde}
+      - HASURA_GRAPHQL_VOTEPELOCLIMA_DATABASE_URL=${VOTEPELOCLIMA_DATABASE_URL:-postgres://user:pass@postgres:5432/votepeloclima}
       - HASURA_GRAPHQL_ENABLE_CONSOLE=${HASURA_GRAPHQL_ENABLE_CONSOLE:-'false'}
       - HASURA_GRAPHQL_ADMIN_SECRET=${HASURA_GRAPHQL_ADMIN_SECRET:-segredo123}
       - HASURA_GRAPHQL_JWT_SECRET=${HASURA_GRAPHQL_JWT_SECRET}
