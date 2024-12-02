@@ -22,7 +22,7 @@ services:
       - traefik.http.routers.mautic.priority=10000
       - traefik.http.routers.mautic.tls=true
       - traefik.http.routers.mautic.tls.certresolver=myresolver
-      # - traefik.http.routers.mautic-nossas.rule=Host(`${MAUTIC_URL}`)
+      - traefik.http.routers.mautic.rule=Host(`${MAUTIC_URL}`)
 
   formularios:
     image: ${FORMULARIO_DOCKER_IMAGE:-nossas/mapa-org-formularios:v1.3.6}
@@ -32,7 +32,6 @@ services:
       - DEBUG=${FORMULARIO_DEBUG:-True}
       - ALLOWED_HOSTS=${FORMULARIO_ALLOWED_HOSTS}
       - VOLUNTEER_HOST=${FORMULARIO_VOLUNTEER_HOST}
-      - MSR_HOST=${FORMULARIO_MSR_HOST}
       - DATABASE_URL=${FORMULARIO_DATABASE_URL}
       - BONDE_DATABASE_URL=${BONDE_DATABASE_URL}
       - MOODLE_API_URL=${FORMULARIO_MOODLE_API_URL}
@@ -51,7 +50,7 @@ services:
       - traefik.http.services.formularios.loadbalancer.server.port=8000
       - traefik.http.routers.formularios.tls=true
       - traefik.http.routers.formularios.tls.certresolver=myresolver
-      # - traefik.http.routers.formularios.rule=Host(`${FORMULARIO_MSR_HOST}`) || Host(`${FORMULARIO_VOLUNTEER_HOST}`)
+      - traefik.http.routers.formularios.rule=Host(`${FORMULARIO_VOLUNTEER_HOST}`)
 
   moodle:
     image: bitnami/moodle:latest
