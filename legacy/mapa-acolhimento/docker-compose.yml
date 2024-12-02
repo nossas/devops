@@ -53,7 +53,7 @@ services:
       - traefik.http.routers.formularios.rule=Host(`${FORMULARIO_VOLUNTEER_HOST}`)
 
   moodle:
-    image: bitnami/moodle:latest
+    image: bitnami/moodle:4.1
     volumes:
       - moodle_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
