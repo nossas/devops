@@ -1,6 +1,6 @@
 services:
   metabase:
-    image: metabase/metabase:v0.51.4
+    image: metabase/metabase
     environment:
       JAVA_TIMEZONE: America/Sao_Paulo
       MB_DB_TYPE: postgres
