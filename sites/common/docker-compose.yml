@@ -80,6 +80,20 @@ services:
       - "2379:2379"
       - "2380:2380"
 
+  redirect:
+    image: nossas/bonde-redirect:0.4.7
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    pull_policy: always
+    environment:
+      - PORT=3007
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.redirect.priority=1
+      - traefik.http.services.redirect.loadbalancer.server.port=3007
+      - traefik.http.routers.redirect.tls=true
+      - traefik.http.routers.redirect.tls.certresolver=myresolver
+      - traefik.http.routers.redirect.rule=${REDIRECT_TRAEFIK_RULES}
+
 volumes:
   letsencrypt:
     driver: local
