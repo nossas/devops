@@ -1,0 +1,24 @@
+services:
+  metabase:
+    image: metabase/metabase
+    environment:
+      JAVA_TIMEZONE: America/Sao_Paulo
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${MB_DB_DBNAME:-metabase}
+      MB_DB_PORT: ${MB_DB_PORT:-5432}
+      MB_DB_USER: ${MB_DB_USER:-postgres}
+      MB_DB_PASS: ${MB_DB_PASS:-postgres}
+      MB_DB_HOST: ${MB_DB_HOST:-postgres}
+      JAVA_TOOL_OPTIONS: -Xmx2g
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.metabase.loadbalancer.server.port=3000
+      - traefik.http.routers.metabase.tls=true
+      - traefik.http.routers.metabase.tls.certresolver=myresolver
+      - traefik.http.routers.metabase.rule=Host(`metabase.${DEFAULT_DOMAIN_RULE}`)
+
+# Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
+networks:
+  default:
+    # Padronizar o nome da rede com o nome do domínio
+    name: web
