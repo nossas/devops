@@ -51,13 +51,17 @@ module "legacy_server" {
   portainer_edge_key        = var.legacy_portainer_edge_key
 }
 
-# module "sites_server" {
-#   source            = "./modules/common"
-#   ami               = var.ami
-#   instance_type     = var.sites_server_instance_type
-#   instance_name     = "sites-server-${local.env}"
-#   key_name          = local.key_name
-#   private_key_path  = local.private_key_path
-#   monitoring_files_path = "./monitoring"
-#   influxdb_token    = var.influxdb_token
-# }
+module "sites_server" {
+  source                    = "./modules/common"
+  ami                       = var.ami
+  instance_type             = var.sites_server_instance_type
+  instance_name             = "sites-server-${local.env}"
+  volume_size               = terraform.workspace == "prod" ? 100 : 30 
+  key_name                  = local.key_name
+  private_key_path          = local.private_key_path
+  monitoring_files_path     = "./monitoring"
+  influxdb_token            = var.influxdb_token
+  elastic_ip_allocation_id  = var.sites_elastic_ip_allocation_id
+  portainer_edge_id         = var.sites_portainer_edge_id
+  portainer_edge_key        = var.sites_portainer_edge_key
+}

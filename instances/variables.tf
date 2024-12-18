@@ -10,6 +10,12 @@ variable "legacy_elastic_ip_allocation_id" {
     default     = ""
 }
 
+variable "sites_elastic_ip_allocation_id" {
+    description = "ID da alocação de um IP Elástico da AWS"
+    type        = string
+    default     = ""
+}
+
 variable "ami" {
     description = "Tipo de imagem para o servidor legado (APIS e Clientes Bonde)"
     type        = string
@@ -36,6 +42,17 @@ variable "legacy_portainer_edge_id" {
 }
 
 variable "legacy_portainer_edge_key" {
+    description = "Chave Secreta do ambiente no Portainer"
+    type        = string
+    sensitive   = true
+}
+
+variable "sites_portainer_edge_id" {
+    description = "ID do ambiente no Portainer"
+    type        = string
+}
+
+variable "sites_portainer_edge_key" {
     description = "Chave Secreta do ambiente no Portainer"
     type        = string
     sensitive   = true

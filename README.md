@@ -66,9 +66,11 @@ terraform init -auto-approve
 Essa sequência de comandos acima irá criar a infraestrutura não persistente responsável por cuidar do estado da nossa infraestrutura persistente.
 
 ### Executando a infraestrutura com esquema de workspaces do terraform
+
 Este projeto utiliza *workspaces* do Terraform para gerenciar múltiplos ambientes (como `dev`, `stage` e `prod`) dentro de uma única configuração de infraestrutura. Cada *workspace* permite isolar o estado e os recursos entre diferentes ambientes.
 
 Dentro da estrutura do nosso código, temos o arquivo `main.tf` onde nós definimos todas as variáveis *default*, como a seguir:
+
 ```
 locals {
   # Tipo de imagem para o servidor legado (APIS e Clientes Bonde)
@@ -108,6 +110,27 @@ locals {
    terraform init
    terraform apply -auto-approve
    ```
+
+### Configuração do ambiente
+
+Você deve configurar as seguintes váriaveis no seu ambiente de execução do terraform. Lembre-se você deve utilizar os mesmos valores de váriaveis que outros ambientes que também executam o terraform, exemplo dev local e github actions.
+
+```
+TF_VAR_influxdb_token=
+TF_VAR_ami=
+# legacy envs
+TF_VAR_legacy_elastic_ip_allocation_id=
+TF_VAR_legacy_server_instance_type=
+TF_VAR_legacy_portainer_edge_id=
+TF_VAR_legacy_portainer_edge_key=
+# sites envs
+TF_VAR_sites_elastic_ip_allocation_id=
+TF_VAR_sites_server_instance_type=
+TF_VAR_sites_portainer_edge_id=
+TF_VAR_sites_portainer_edge_key=
+```
+
+NOTE: As váriaveis com suffix `_elastic_ip_allocation_id` não são obrigatórias, caso você não configure os scripts não vão associar um IP Elástico ao seus servidores.
 
 ## Sites
 
