@@ -24,7 +24,6 @@ services:
     labels:
       - traefik.http.services.public.loadbalancer.server.port=3000
       - traefik.enable=true
-      - traefik.http.routers.public.priority=-1
       - traefik.http.routers.public.tls=true
       - traefik.http.routers.public.tls.certresolver=myresolver
       - traefik.http.routers.public.rule=${PUBLIC_TRAEFIK_RULE}
