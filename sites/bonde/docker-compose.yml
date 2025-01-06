@@ -24,10 +24,12 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.public.loadbalancer.server.port=3000
+      - traefik.http.routers.public.priority=-1
       - traefik.http.routers.public.tls=true
       - traefik.http.routers.public.tls.certresolver=myresolver
-      - traefik.http.routers.public.entrypoints=websecure
-      - traefik.http.routers.public.rule=${PUBLIC_TRAEFIK_ROUTERS_RULE}
+      - traefik.http.routers.public.rule=HostRegexp(`{host:.+}`)
+      - traefik.http.routers.public.tls.domains[0].main=${DEFAULT_DOMAIN_RULE:-bonde.devel}
+      - traefik.http.routers.public.tls.domains[0].sans=*.${DEFAULT_DOMAIN_RULE:-bonde.devel}
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
