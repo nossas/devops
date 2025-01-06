@@ -11,7 +11,6 @@ services:
       - projetotrilhas_wp_data:/var/www/html
     labels:
       - traefik.enable=true
-      - traefik.http.routers.wordpress.priority=10
       - traefik.http.services.wordpress.loadbalancer.server.port=80
       - traefik.http.routers.wordpress.tls=true
       - traefik.http.routers.wordpress.tls.certresolver=myresolver
