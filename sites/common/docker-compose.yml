@@ -86,6 +86,8 @@ services:
     pull_policy: always
     environment:
       - PORT=3007
+    volumes:
+      - redirect:/go/src/app
     labels:
       - traefik.enable=true
       - traefik.http.routers.redirect.priority=1
@@ -98,6 +100,8 @@ volumes:
   letsencrypt:
     driver: local
   etcd:
+    driver: local
+  redirect:
     driver: local
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
