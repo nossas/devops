@@ -24,18 +24,13 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.public.loadbalancer.server.port=3000
-      # Add middleware www https
-      - traefik.http.routers.public-catchall.middlewares=wwwtohttps
       # Catch-all Router
       - traefik.http.routers.public-catchall.rule=PathPrefix(`/`)
       - traefik.http.routers.public-catchall.entrypoints=websecure
       - traefik.http.routers.public-catchall.priority=1
       - traefik.http.routers.public-catchall.tls=true
       - traefik.http.routers.public-catchall.tls.certresolver=myresolver
-      # Optional: Catch-all HTTP Router
-      - traefik.http.routers.public-catchall-http.rule=PathPrefix(`/`)
-      - traefik.http.routers.public-catchall-http.entrypoints=web
-      - traefik.http.routers.public-catchall-http.priority=1
+      - traefik.http.routers.public-catchall.middlewares=wwwtohttps
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
