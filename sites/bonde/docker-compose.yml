@@ -41,6 +41,7 @@ services:
       - imaginary_data:/mnt/data
     environment:
        PORT: 9000
+       DEBUG: ${IMAGINARY_DEBUG-:*}
     command:
       -mount /mnt/data
       -enable-url-source
