@@ -1,6 +1,6 @@
 services:
   public:
-    image: ${DOCKER_WEBPAGE_IMAGE:-nossas/bonde-webpage:webpage-v1.0.0}
+    image: ${DOCKER_WEBPAGE_IMAGE:-nossas/bonde-public:latest}
     command: pnpm --filter webpage-client start
     restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     pull_policy: always
