@@ -46,7 +46,6 @@ services:
       -mount /mnt/data
       -enable-url-source
       -cors
-      -gzip
       -allowed-origins ${IMAGINARY_ALLOWED_ORIGINS:-https://s3.amazonaws.com/hub-central/uploads/}
       -http-cache-ttl 31556926
       -enable-placeholder
