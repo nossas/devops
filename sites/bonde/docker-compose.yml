@@ -15,6 +15,7 @@ services:
       - REACT_APP_DOMAIN_API_REST=${PUBLIC_REST_API:-http://api-rest.bonde.devel}
       - REACT_APP_DOMAIN_PUBLIC=${DEFAULT_DOMAIN_RULE:-bonde.devel}
       - REACT_APP_ACTIVE_API_CACHE=${ACTIVE_API_CACHE:-false}
+      - REACT_APP_DOMAIN_IMAGINARY=${PUBLIC_DOMAIN_IMAGINARY:-http://imaginary.bonde.devel}
     healthcheck:
       test: "${DOCKER_WEB_HEALTHCHECK_TEST:-wget -qO- localhost:3000/api/ping}"
       interval: "60s"
@@ -34,6 +35,31 @@ services:
       - traefik.http.routers.public-catchall-http.rule=PathPrefix(`/`)
       - traefik.http.routers.public-catchall-http.entrypoints=web
       - traefik.http.routers.public-catchall-http.priority=1
+
+  imaginary:
+    image: h2non/imaginary:latest
+    volumes:
+      - imaginary_data:/mnt/data
+    environment:
+       PORT: 9000
+       DEBUG: ${IMAGINARY_DEBUG-:*}
+    command:
+      -mount /mnt/data
+      -enable-url-source
+      -cors
+      -allowed-origins ${IMAGINARY_ALLOWED_ORIGINS:-https://s3.amazonaws.com/hub-central/uploads/}
+      -http-cache-ttl 31556926
+      -enable-placeholder
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.imaginary.loadbalancer.server.port=9000
+      - traefik.http.routers.imaginary.tls=true
+      - traefik.http.routers.imaginary.tls.certresolver=myresolver
+
+volumes:
+  imaginary_data:
+    driver: local
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
