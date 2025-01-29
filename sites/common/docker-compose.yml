@@ -38,8 +38,10 @@ services:
       # Certificates
       - "--certificatesResolvers.myresolver.acme.tlsChallenge=true"
       - "--certificatesResolvers.myresolver.acme.email=${TRAEFIK_DEFAULT_EMAIL_ACME:-igr.exe@gmail.com}"
-      - "--certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesResolvers.myresolver.acme.dnsChallenge.provider=route53"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.keyType=RSA4096"
+      - "--certificatesresolvers.myresolver.acme.dnsChallenge.provider=route53"
+      - "--certificatesresolvers.myresolver.acme.dnsChallenge.delayBeforeCheck=0"
     ports:
       - "80:80"
       - "443:443"
@@ -51,7 +53,7 @@ services:
     environment:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-xxxxxxx}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-xxxxxx}
-      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_DEFAULT_REGION=${AWS_REGION:-us-east-1}
     labels:
       - traefik.enable=true
       # export traefik dashboard
