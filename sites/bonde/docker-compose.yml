@@ -26,11 +26,11 @@ services:
       - traefik.enable=true
       - traefik.http.services.public.loadbalancer.server.port=3000
       # Catch-all Router
-      - traefik.http.routers.public-catchall.rule=PathPrefix(`/`)
-      - traefik.http.routers.public-catchall.entrypoints=websecure
-      - traefik.http.routers.public-catchall.priority=1
-      - traefik.http.routers.public-catchall.tls=true
-      - traefik.http.routers.public-catchall.tls.certresolver=myresolver
+      - traefik.http.routers.public.rule=PathPrefix(`/`)
+      - traefik.http.routers.public.entrypoints=websecure
+      - traefik.http.routers.public.priority=1
+      - traefik.http.routers.public.tls=true
+      - traefik.http.routers.public.tls.certresolver=myresolver
 
   imaginary:
     image: h2non/imaginary:latest
