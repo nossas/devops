@@ -31,10 +31,7 @@ services:
       - traefik.http.routers.public-catchall.priority=1
       - traefik.http.routers.public-catchall.tls=true
       - traefik.http.routers.public-catchall.tls.certresolver=myresolver
-      # Optional: Catch-all HTTP Router
-      - traefik.http.routers.public-catchall-http.rule=PathPrefix(`/`)
-      - traefik.http.routers.public-catchall-http.entrypoints=web
-      - traefik.http.routers.public-catchall-http.priority=1
+      - traefik.http.routers.public-catchall.middlewares=wwwtohttps
 
   imaginary:
     image: h2non/imaginary:latest
