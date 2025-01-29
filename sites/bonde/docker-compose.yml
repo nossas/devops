@@ -31,7 +31,6 @@ services:
       - traefik.http.routers.public-catchall.priority=1
       - traefik.http.routers.public-catchall.tls=true
       - traefik.http.routers.public-catchall.tls.certresolver=myresolver
-      - traefik.http.routers.public-catchall.middlewares=wwwtohttps
 
   imaginary:
     image: h2non/imaginary:latest
