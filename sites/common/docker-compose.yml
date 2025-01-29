@@ -39,6 +39,7 @@ services:
       - "--certificatesResolvers.myresolver.acme.tlsChallenge=true"
       - "--certificatesResolvers.myresolver.acme.email=${TRAEFIK_DEFAULT_EMAIL_ACME:-igr.exe@gmail.com}"
       - "--certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesResolvers.myresolver.acme.dnsChallenge.provider=route53"
     ports:
       - "80:80"
       - "443:443"
