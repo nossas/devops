@@ -14,6 +14,9 @@ services:
     environment:
       - CADDY_ADMIN=0.0.0.0:2019
       - CADDY_EMAIL=${CADDY_EMAIL:-seu-email@example.com}  # Para receber notificações do Let's Encrypt
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-"SUA_ACCESS_KEY"}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"SUA_SECRET_KEY"}
+      - AWS_REGION="us-east-1"
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
