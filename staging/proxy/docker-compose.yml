@@ -1,0 +1,27 @@
+services:
+  caddy:
+    image: caddy:2.7
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2019:2019"
+    volumes:
+      # - Caddyfile:/etc/caddy/Caddyfile
+      - caddy_srv:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - CADDY_ADMIN=0.0.0.0:2019
+      - CADDY_EMAIL=${CADDY_EMAIL:-seu-email@example.com}  # Para receber notificações do Let's Encrypt
+
+# Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
+networks:
+  default:
+    # Padronizar o nome da rede com o nome do domínio
+    name: web
+
+volumes:
+  caddy_srv:
+  caddy_data:
+  caddy_config:

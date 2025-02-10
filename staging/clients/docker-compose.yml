@@ -1,0 +1,54 @@
+services:
+  accounts:
+    image: ${DOCKER_IMAGE:-nossas/bonde-clients:clients-v1.0.0}
+    command: pnpm --filter accounts-client start
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    pull_policy: always
+    healthcheck:
+      test: "${DOCKER_WEB_HEALTHCHECK_TEST:-wget -qO- localhost:3000}"
+      interval: "60s"
+      timeout: "3s"
+      start_period: "5s"
+      retries: 3
+
+  app:
+    image: ${DOCKER_IMAGE:-nossas/bonde-clients:clients-v1.0.0}
+    command: pnpm --filter admin-client start
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    pull_policy: always
+    healthcheck:
+      test: "${DOCKER_WEB_HEALTHCHECK_TEST:-wget -qO- localhost:5000}"
+      interval: "60s"
+      timeout: "3s"
+      start_period: "5s"
+      retries: 3
+
+  admin-canary:
+    image: ${DOCKER_IMAGE:-nossas/bonde-clients:clients-v1.0.0}
+    command: pnpm --filter canary-client start
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    pull_policy: always
+    healthcheck:
+      test: "${DOCKER_WEB_HEALTHCHECK_TEST:-wget -qO- localhost:3000}"
+      interval: "60s"
+      timeout: "3s"
+      start_period: "5s"
+      retries: 3
+
+  redes:
+    image: ${DOCKER_REDES_IMAGE:-nossas/bonde-clients:v7.7.2}
+    command: pnpm --filter redes-client start
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    pull_policy: always
+    healthcheck:
+      test: "${DOCKER_WEB_HEALTHCHECK_TEST:-wget -qO- localhost:3000}"
+      interval: "60s"
+      timeout: "3s"
+      start_period: "5s"
+      retries: 3
+
+# Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
+networks:
+  default:
+    # Padronizar o nome da rede com o nome do domínio
+    name: web
