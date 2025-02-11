@@ -2,7 +2,6 @@ services:
   caddy:
     image: nossas/caddy
     restart: unless-stopped
-    command: caddy run --config /etc/caddy/caddy.json
     ports:
       - "80:80"
       - "443:443"
