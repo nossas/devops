@@ -22,16 +22,6 @@ services:
       timeout: "3s"
       start_period: "50s"
       retries: 3
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.public.loadbalancer.server.port=3000
-      # Catch-all Router
-      - traefik.http.routers.public-catchall.rule=PathPrefix(`/`)
-      - traefik.http.routers.public-catchall.entrypoints=websecure
-      - traefik.http.routers.public-catchall.priority=1
-      - traefik.http.routers.public-catchall.tls=true
-      - traefik.http.routers.public-catchall.tls.certresolver=myresolver
-      - traefik.http.routers.public-catchall.middlewares=wwwtohttps
 
   imaginary:
     image: h2non/imaginary:latest
@@ -48,11 +38,6 @@ services:
       -http-cache-ttl 31556926
       -enable-placeholder
     restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.imaginary.loadbalancer.server.port=9000
-      - traefik.http.routers.imaginary.tls=true
-      - traefik.http.routers.imaginary.tls.certresolver=myresolver
 
 volumes:
   imaginary_data:
