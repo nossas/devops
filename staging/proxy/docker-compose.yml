@@ -7,8 +7,7 @@ services:
       - "443:443"
       - "2019:2019"
     volumes:
-      # - Caddyfile:/etc/caddy/Caddyfile
-      - caddy_srv:/srv
+      - caddy_etc:/etc/caddy
       - caddy_data:/data
       - caddy_config:/config
     environment:
@@ -25,6 +24,6 @@ networks:
     name: web
 
 volumes:
-  caddy_srv:
+  caddy_etc:
   caddy_data:
   caddy_config:
