@@ -30,22 +30,30 @@ services:
       - "8000:8000"
     volumes:
       - caddy_etc:/app/data/caddy
+    depends_on:
+      - redis
     environment:
       - DEBUG=True
       - JWT_SECRET=${JWT_SECRET}
       - JWT_ALGORITHM=${JWT_ALGORITHM}
       - JWT_AUDIENCE=${JWT_AUDIENCE}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
   
   router-celery:
     image: nossas/bonde-router:feature-caddy-api
     command: celery -A caddy_api.manager.celery_app.app worker --loglevel=info
     volumes:
       - caddy_etc:/app/data/caddy
+    depends_on:
+      - redis
     environment:
       - DEBUG=True
       - JWT_SECRET=${JWT_SECRET}
       - JWT_ALGORITHM=${JWT_ALGORITHM}
       - JWT_AUDIENCE=${JWT_AUDIENCE}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
