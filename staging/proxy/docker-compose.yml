@@ -31,6 +31,7 @@ services:
     volumes:
       - caddy_etc:/app/data/caddy
     depends_on:
+      - caddy
       - redis
     environment:
       - DEBUG=True
@@ -39,6 +40,7 @@ services:
       - JWT_AUDIENCE=${JWT_AUDIENCE}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - CADDY_API_URL=http://caddy:2019
   
   router-celery:
     image: nossas/bonde-router:feature-caddy-api
@@ -46,6 +48,7 @@ services:
     volumes:
       - caddy_etc:/app/data/caddy
     depends_on:
+      - caddy
       - redis
     environment:
       - DEBUG=True
@@ -54,6 +57,7 @@ services:
       - JWT_AUDIENCE=${JWT_AUDIENCE}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - CADDY_API_URL=http://caddy:2019
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
