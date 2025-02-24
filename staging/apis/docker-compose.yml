@@ -21,6 +21,7 @@ services:
       - API_REDES_URL=${HASURA_REMOTE_SCHEMA_API_REDES_URL:-http://api-redes.bonde.devel}
       - API_ROUTER_URL=${HASURA_REMOTE_SCHEMA_API_ROUTER_URL:-http://api-router.bonde.devel}
       - N8N_WEBHOOK_URL=${HASURA_N8N_WEBHOOK_URL:-http://n8n.bonde.devel/webhook}
+      - HASURA_CRON_SECRET=${HASURA_CRON_SECRET}
       - PORT=8080
     restart: always
     pull_policy: always
