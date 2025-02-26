@@ -53,24 +53,6 @@ services:
       - traefik.http.routers.admin-canary.tls.certresolver=myresolver
       - traefik.http.routers.admin-canary.rule=Host(`admin-canary.${DEFAULT_DOMAIN_RULE}`)
 
-  redes:
-    image: ${DOCKER_REDES_IMAGE:-nossas/bonde-clients:v7.7.2}
-    command: pnpm --filter redes-client start
-    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
-    pull_policy: always
-    healthcheck:
-      test: "${DOCKER_WEB_HEALTHCHECK_TEST:-wget -qO- localhost:3000}"
-      interval: "60s"
-      timeout: "3s"
-      start_period: "5s"
-      retries: 3
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.redes.loadbalancer.server.port=3000
-      - traefik.http.routers.redes.tls=true
-      - traefik.http.routers.redes.tls.certresolver=myresolver
-      - traefik.http.routers.redes.rule=Host(`redes.${DEFAULT_DOMAIN_RULE}`)
-
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
 networks:
   default:
