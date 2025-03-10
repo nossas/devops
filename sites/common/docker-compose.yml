@@ -18,18 +18,49 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"SUA_SECRET_KEY"}
       - AWS_REGION=${AWS_REGION:-"us-east-1"}
 
-  redirect:
-    image: nossas/bonde-redirect:0.4.7
-    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
-    pull_policy: always
-    environment:
-      - PORT=3007
+  redis:
+    image: redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+
+  router-api:
+    image: ${ROUTER_DOCKER_IMAGE:-nossas/bonde-router:v0.0.3}
+    command: uvicorn caddy_api.api:app --reload --host 0.0.0.0
     volumes:
-      - redirect:/go/src/app
+      - caddy_etc:/app/data/caddy
+    depends_on:
+      - caddy
+      - redis
+    environment:
+      - DEBUG=True
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_AUDIENCE=${JWT_AUDIENCE}
+      - HASURA_CRON_SECRET=${HASURA_CRON_SECRET}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CADDY_API_URL=http://caddy:2019
+  
+  router-celery:
+    image: ${ROUTER_DOCKER_IMAGE:-nossas/bonde-router:v0.0.3}
+    command: celery -A caddy_api.manager.celery_app.app worker --loglevel=info
+    volumes:
+      - caddy_etc:/app/data/caddy
+    depends_on:
+      - caddy
+      - redis
+    environment:
+      - DEBUG=True
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - JWT_AUDIENCE=${JWT_AUDIENCE}
+      - HASURA_CRON_SECRET=${HASURA_CRON_SECRET}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CADDY_API_URL=http://caddy:2019
 
 volumes:
-  redirect:
-    driver: local
   caddy_etc:
     driver: local
   caddy_data:
