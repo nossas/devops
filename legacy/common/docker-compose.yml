@@ -142,7 +142,7 @@ services:
       - traefik.http.routers.api-rest.rule=Host(`api-rest.${DEFAULT_DOMAIN_RULE}`)
 
   n8n:
-    image: n8nio/n8n:1.66.0
+    image: n8nio/n8n:latest
     environment:
       - DB_POSTGRESDB_DATABASE=${N8N_DB_POSTGRESDB_DATABASE:-n8n}
       - DB_POSTGRESDB_HOST=${N8N_DB_POSTGRESDB_HOST:-postgres}
@@ -154,7 +154,7 @@ services:
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
       - DB_LOGGING_ENABLED=true
       - DB_LOGGING_OPTIONS=all
-      - DB_POSTGRESDB_SSL=true
+      - DB_POSTGRESDB_SSL_ENABLED=true
     volumes:
       - n8n:/home/node/.n8n
     labels:
