@@ -18,18 +18,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"SUA_SECRET_KEY"}
       - AWS_REGION=${AWS_REGION:-"us-east-1"}
 
-  redirect:
-    image: nossas/bonde-redirect:0.4.7
-    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
-    pull_policy: always
-    environment:
-      - PORT=3007
-    volumes:
-      - redirect:/go/src/app
-
 volumes:
-  redirect:
-    driver: local
   caddy_etc:
     driver: local
   caddy_data:
