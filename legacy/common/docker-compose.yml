@@ -85,6 +85,8 @@ services:
       - API_DOMAINS_URL=${HASURA_REMOTE_SCHEMA_API_DOMAINS_URL:-http://api-domains.bonde.devel}
       - API_NOTIFICATIONS_URL=${HASURA_REMOTE_SCHEMA_API_NOTIFICATIONS_URL:-http://notifications.bonde.devel}
       - API_PAYMENTS_URL=${HASURA_REMOTE_SCHEMA_API_PAYMENTS_URL:-http://api-payments.bonde.devel}
+      - API_ROUTER_URL=${HASURA_REMOTE_SCHEMA_API_ROUTER_URL:-http://api-router.bonde.devel}
+      - HASURA_CRON_SECRET=${HASURA_CRON_SECRET}
       - N8N_WEBHOOK_URL=${HASURA_N8N_WEBHOOK_URL:-http://n8n.bonde.devel/webhook}
       - PORT=8080
     restart: always
