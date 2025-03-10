@@ -154,6 +154,7 @@ services:
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
       - DB_LOGGING_ENABLED=true
       - DB_LOGGING_OPTIONS=all
+      - DB_POSTGRESDB_SSL=true
     volumes:
       - n8n:/home/node/.n8n
     labels:
