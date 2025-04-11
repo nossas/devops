@@ -73,3 +73,4 @@ networks:
   default:
     # Padronizar o nome da rede com o nome do domínio
     name: web
+    external: true
