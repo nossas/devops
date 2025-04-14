@@ -10,12 +10,12 @@ services:
       - MYSQL_PORT_3306_TCP=${MYSQL_PORT_3306_TCP:-3306}
     volumes:
       - mautic_data:/var/www/html
-    healthcheck:
-      test: "${DOCKER_WEB_HEALTHCHECK_TEST:-wget -qO- localhost}"
-      interval: "60s"
-      timeout: "3s"
-      start_period: "5s"
-      retries: 3
+#    healthcheck:
+#      test: "${DOCKER_WEB_HEALTHCHECK_TEST:-wget -qO- localhost}"
+#      interval: "60s"
+#      timeout: "3s"
+#      start_period: "5s"
+#      retries: 3
     labels:
       - traefik.enable=true
       - traefik.http.services.mautic.loadbalancer.server.port=80
@@ -39,6 +39,8 @@ services:
       - GEOCODING_API_KEY=${FORMULARIO_GEOCODING_API_KEY}
       - GOOGLE_MAPS_API_KEY=${FORMULARIO_GOOGLE_MAPS_API_KEY}
       - MOODLE_DATABASE_URL=${FORMULARIO_MOODLE_DATABASE_URL}
+      - MOODLE_DEFAULT_PASS=${FORMULARIO_MOODLE_DEFAULT_PASS}
+      - META_PIXEL_ID=${FORMULARIO_META_PIXEL_ID}
       - LOOPS_API_KEY=${FORMULARIO_LOOPS_API_KEY}
       - ZENDESK_SUBDOMAIN=${FORMULARIO_ZENDESK_SUBDOMAIN}
       - ZENDESK_API_TOKEN=${FORMULARIO_ZENDESK_API_TOKEN}
@@ -52,33 +54,8 @@ services:
       - traefik.http.routers.formularios.tls.certresolver=myresolver
       - traefik.http.routers.formularios.rule=Host(`${FORMULARIO_VOLUNTEER_HOST}`)
 
-  moodle:
-    image: bitnami/moodle:4.1
-    volumes:
-      - moodle_data:/bitnami/moodle
-      - moodledata_data:/bitnami/moodledata
-    environment:
-      - MOODLE_DATABASE_TYPE=${MOODLE_DATABASE_TYPE:-pgsql}
-      - MOODLE_DATABASE_HOST=${MOODLE_DATABASE_HOST}
-      - MOODLE_DATABASE_USER=${MOODLE_DATABASE_USER}
-      - MOODLE_DATABASE_PASSWORD=${MOODLE_DATABASE_PASSWORD}
-      - MOODLE_DATABASE_NAME=${MOODLE_DATABASE_NAME}
-      - MOODLE_DATABASE_PORT_NUMBER=${MOODLE_DATABASE_PORT_NUMBER:-5432}
-      - MOODLE_HOST=${MOODLE_HOST}
-      - MOODLE_SSLPROXY=${MOODLE_SSLPROXY:-true}
-    labels:
-      - traefik.enable=true
-      - traefik.http.services.moodle.loadbalancer.server.port=8080
-      - traefik.http.routers.moodle.tls=true
-      - traefik.http.routers.moodle.tls.certresolver=myresolver
-      # - traefik.http.routers.moodle.rule=Host(`${MOODLE_HOST}`)
-
 volumes:
   mautic_data:
-    driver: local
-  moodle_data:
-    driver: local
-  moodledata_data:
     driver: local
 
 # Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
