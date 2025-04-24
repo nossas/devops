@@ -49,7 +49,7 @@ resource "aws_instance" "server" {
       # Reinicia o telegraf para garantir que a variavel está configurada
       "sudo systemctl restart telegraf",
       # Adiciona essa instância ao Portainer
-      "sudo docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes -v /:/host -v portainer_agent_data:/data --restart always -e EDGE=1 -e EDGE_ID=${var.portainer_edge_id} -e EDGE_KEY=${var.portainer_edge_key} -e EDGE_INSECURE_POLL=1 --name portainer_edge_agent portainer/agent:2.15.1"
+      "sudo docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes -v /:/host -v portainer_agent_data:/data --restart always -e EDGE=1 -e EDGE_ID=${var.portainer_edge_id} -e EDGE_KEY=${var.portainer_edge_key} -e EDGE_INSECURE_POLL=1 --name portainer_edge_agent portainer/agent:2.27.3"
     ]
 
     connection {
