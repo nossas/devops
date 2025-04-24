@@ -16,6 +16,12 @@ variable "sites_elastic_ip_allocation_id" {
     default     = ""
 }
 
+variable "dcp_elastic_ip_allocation_id" {
+    description = "ID da alocação de um IP Elástico da AWS"
+    type        = string
+    default     = ""
+}
+
 variable "ami" {
     description = "Tipo de imagem para o servidor legado (APIS e Clientes Bonde)"
     type        = string
@@ -32,6 +38,12 @@ variable "legacy_server_instance_type" {
 
 variable "sites_server_instance_type" {
     description = "Tipo de instância para o servidor de sites (Bonde Público e CMS)"
+    type        = string
+    default     = "t3.micro"
+}
+
+variable "dcp_server_instance_type" {
+    description = "Tipo de instância para o servidor da Defesa Climatica Popular"
     type        = string
     default     = "t3.micro"
 }
@@ -53,6 +65,17 @@ variable "sites_portainer_edge_id" {
 }
 
 variable "sites_portainer_edge_key" {
+    description = "Chave Secreta do ambiente no Portainer"
+    type        = string
+    sensitive   = true
+}
+
+variable "dcp_portainer_edge_id" {
+    description = "ID do ambiente no Portainer"
+    type        = string
+}
+
+variable "dcp_portainer_edge_key" {
     description = "Chave Secreta do ambiente no Portainer"
     type        = string
     sensitive   = true

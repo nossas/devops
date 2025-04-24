@@ -65,3 +65,18 @@ module "sites_server" {
   portainer_edge_id         = var.sites_portainer_edge_id
   portainer_edge_key        = var.sites_portainer_edge_key
 }
+
+module "dcp_server" {
+  source                    = "./modules/common"
+  ami                       = var.ami
+  instance_type             = var.dcp_server_instance_type
+  instance_name             = "dcp-${local.env}"
+  volume_size               = terraform.workspace == "prod" ? 100 : 30 
+  key_name                  = local.key_name
+  private_key_path          = local.private_key_path
+  monitoring_files_path     = "./monitoring"
+  influxdb_token            = var.influxdb_token
+  elastic_ip_allocation_id  = var.dcp_elastic_ip_allocation_id
+  portainer_edge_id         = var.dcp_portainer_edge_id
+  portainer_edge_key        = var.dcp_portainer_edge_key
+}
