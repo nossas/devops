@@ -59,8 +59,10 @@ services:
   bonde-actions-api:
     image: ${BONDE_ACTIONS_API_DOCKER_IMAGE:-nossas/bonde-actions-api:release-v0.0.1}
     environment:
-      - name=value
-      - CALLBACK_URL=${BONDE_ACTIONS_API_CALLBACK_URL}
+      - APP_NAME="[Bonde] Actions API"
+      - DEBUG=${BONDE_ACTIONS_API_DEBUG:-True}
+      - LOG_LEVEL=${BONDE_ACTIONS_API_LOG_LEVEL:-INFO}
+      - BASE_URL=${BONDE_ACTIONS_API_BASE_URL}
       - GRAPHQL_API_URL=${BONDE_ACTIONS_API_GRAPHQL_API_URL}
       - TWILIO_ACCOUNT_SID=${BONDE_ACTIONS_API_TWILIO_ACCOUNT_SID}
       - TWILIO_AUTH_TOKEN=${BONDE_ACTIONS_API_TWILIO_AUTH_TOKEN}
