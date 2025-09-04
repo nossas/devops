@@ -16,6 +16,8 @@ services:
       - REACT_APP_DOMAIN_PUBLIC=${DEFAULT_DOMAIN_RULE:-bonde.devel}
       - REACT_APP_ACTIVE_API_CACHE=${ACTIVE_API_CACHE:-false}
       - REACT_APP_DOMAIN_IMAGINARY=${PUBLIC_DOMAIN_IMAGINARY:-http://imaginary.bonde.devel}
+      - NEXT_PUBLIC_PHONE_API_URL=${NEXT_PUBLIC_PHONE_API_URL:-http://actions-api.bonde.devel}
+      - NEXT_PUBLIC_PHONE_NUMBER=${NEXT_PUBLIC_PHONE_NUMBER:-+55123131231}
     healthcheck:
       test: "${DOCKER_WEB_HEALTHCHECK_TEST:-wget -qO- localhost:3000/api/ping}"
       interval: "60s"
