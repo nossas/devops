@@ -1,0 +1,96 @@
+services:
+  wordpress:
+    image: ${WORDPRESS_DOCKER_IMAGE:-nossas/dcp-wp:v0.0.1}
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mariadb
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:-mariadb}
+      WORDPRESS_DB_USER: ${MYSQL_USER:-wordpress}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:-wordpress}
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG:-1}
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
+    volumes:
+      - wp-root:/var/www/html/
+
+  mariadb:
+    image: mariadb:10.4
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-therootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wordpress}
+      MYSQL_USER: ${MYSQL_USER:-wordpress}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-wordpress}
+
+  bot:
+    image: ${RASA_DOCKER_IMAGE:-nossas/dcp-bot:latest}
+    depends_on:
+      - postgres
+      - action_server
+    volumes:
+      - /home/ubuntu/config_rasa/credentials.yml:/app/credentials.yml
+      - /home/ubuntu/config_rasa/endpoints.yml:/app/endpoints.yml
+      - bot_media:/app/media/
+    command:
+      - 'run'
+      - '--connector' 
+      - 'whatsapp_connector.WhatsAppInput'
+      - '--debug'
+      - '--enable-api'
+    environment:
+      WORDPRESS_URL: ${RASA_WORDPRESS_URL:-http://wordpress}
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
+      WHATSAPP_AUTH_TOKEN: ${WHATSAPP_AUTH_TOKEN}
+      WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID}
+      RASA_URL: ${RASA_URL}
+    ports:
+      - '5005:5005'
+
+  action_server:
+    image: ${RASA_DOCKER_IMAGE:-nossas/dcp-bot:latest}
+    command:
+      - 'run'
+      - 'actions'
+      - '--debug'
+    environment:
+      WORDPRESS_URL: ${RASA_WORDPRESS_URL:-http://wordpress}
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
+      WHATSAPP_AUTH_TOKEN: ${WHATSAPP_AUTH_TOKEN}
+      WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID}
+      RASA_URL: ${RASA_URL}
+    volumes:
+      - /home/ubuntu/config_rasa/credentials.yml:/app/credentials.yml
+      - /home/ubuntu/config_rasa/endpoints.yml:/app/endpoints.yml
+      - bot_media:/app/media/
+    ports: 
+      - '5055:5055'
+    user: root
+  
+  postgres:
+    image: postgres:17
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_INITDB_ARGS: "--locale-provider=libc"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  mariadb_data:
+  wp-root:
+  postgres_data:
+  bot_appdata:
+  bot_media:
+
+# Todos os serviços devem pertencer a mesma rede para serem descobertos pelo Traefik
+networks:
+  default:
+    # Padronizar o nome da rede com o nome do domínio
+    name: web
+    external: true
