@@ -1,6 +1,6 @@
 services:
   api-graphql:
-    image: hasura/graphql-engine:v2.44.0
+    image: hasura/graphql-engine:latest
     environment:
       - HASURA_GRAPHQL_DATABASE_URL=${BONDE_DATABASE_URL:-postgres://user:pass@postgres:5432/bonde}
       - HASURA_GRAPHQL_VOTEPELOCLIMA_DATABASE_URL=${VOTEPELOCLIMA_DATABASE_URL:-postgres://user:pass@postgres:5432/votepeloclima}
