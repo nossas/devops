@@ -108,7 +108,7 @@ Após ter seu usuário IAM criado:
 Com suas credenciais individuais em mãos, configure o profile da AWS CLI:
 
 ```bash
-aws configure --profile nossas
+aws configure --profile nome-de-profile
 ```
 
 - AWS Access Key ID: [sua access key]
