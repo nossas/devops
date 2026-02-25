@@ -108,7 +108,7 @@ Após ter seu usuário IAM criado:
 Com suas credenciais individuais em mãos, configure o profile da AWS CLI:
 
 ```bash
-aws configure --profile nome-de-profile
+aws configure --profile nossas
 ```
 
 - AWS Access Key ID: [sua access key]
@@ -116,54 +116,74 @@ aws configure --profile nome-de-profile
 - Default region name: us-east-1 (ou a região que você utiliza)
 - Default output format: json
 
-```
-aws sts get-caller-identity --profile nome-de-profile
-```
-
-**⚠️ IMPORTANTE:** Use um nome de profile que identifique que são suas credenciais pessoais (ex: pessoal, seunome-aws). O profile nossas mencionado no kubeconfig é um exemplo; você precisará adaptar para seu profile real.
+**⚠️ IMPORTANTE:** Você pode usar um nome de profile que identifique que são suas credenciais pessoais (ex: pessoal, seunome-aws). O profile `nossas` mencionado no kubeconfig é um exemplo; você poderá adaptar para seu profile real. Caso você use outro nome de profile, deve seguir a etapa [Adaptando o kubeconfig para seu profile](#adaptando-o-kubeconfig-para-seu-profile).
 
 ### Verificando a configuração
 
 ```bash
-aws sts get-caller-identity --profile nome-de-profile
+aws sts get-caller-identity --profile nossas
 ```
 
 Você deve ver as informações do **seu usuário** AWS.
 
 ## Acesso ao Kubernetes (EKS)
 
-### Obter o kubeconfig do Bitwarden
+### Obter a configuração do cluster e configurar acesso
 
-1. Acesse o Bitwarden e busque pelo item "Kubeconfig - EKS Cluster"
-2. Copie todo o conteúdo do arquivo kubeconfig.yaml
+1. Acesse o Bitwarden (cofre compartilhado da tecnologia).
+2. Pesquise por **"Kubeconfig - EKS Cluster"** e copie todo o conteúdo.
+3. Configure o acesso:
+    ```bash
+    # Crie o diretório se não existir
+    mkdir -p ~/.kube
 
-### Configurar o acesso local
+    # Faça backup caso já exista uma configuração
+    [ -f ~/.kube/config ] && cp ~/.kube/config ~/.kube/config.backup
 
-Crie o diretório de configuração do kubectl (se não existir):
+    # Cole o conteúdo do Bitwarden (use seu editor preferido nano/code/vim)
+    vim ~/.kube/config
+    ```
+
+### Já usa Kubernetes e tem outros clusters?
+
+Sem problemas! O kubectl trabalha com contextos. Seu cluster atual vai aparecer como `nossas` e você pode alternar entre eles:
 
 ```bash
-mkdir -p ~/.kube
+# Ver todos os contextos disponíveis
+kubectl config get-contexts
+
+# Mudar para outro contexto
+kubectl config use-context NOME-DO-CONTEXTO
+
+# Voltar para nosso cluster
+kubectl config use-context nossas
 ```
 
-Agora você tem duas opções:
+[Documentação oficial sobre contextos](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/)
 
-**Opção A (recomendada)** - Anexar ao kubeconfig existente:
+### Adaptando o kubeconfig para seu profile
 
-```bash
-# Cole o conteúdo do Bitwarden em um arquivo temporário
-# Depois faça o merge com seu kubeconfig atual
-export KUBECONFIG=~/.kube/config:/caminho/para/arquivo-temporario.yaml
-kubectl config view --flatten > ~/.kube/config-new
-mv ~/.kube/config-new ~/.kube/config
-```
-
-**Opção B** - Substituir o kubeconfig
+O arquivo de kubeconfig do Bitwarden referencia o profile `nossas`. Você precisará ajustar para usar seu profile pessoal:
 
 ```bash
-# CUIDADO: Isso substituirá sua configuração existente
-# Cole o conteúdo do Bitwarden diretamente
-nano ~/.kube/config  # ou use vim, code, etc
-# Cole o conteúdo e salve
+users:
+- name: eks-user
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1beta1
+      command: aws
+      args:
+      - --region
+      - us-east-1
+      - eks
+      - get-token
+      - --cluster-name
+      - eks-cluster-da5d31b
+      - --output
+      - json
+      env:
+      - name: AWS_PROFILE  # ← Importante!
+        value: nossas # ← Altere para SEU profile caso você tenha mudado nos passos anteriores (ex: pessoal, joao-aws, etc.)
 ```
 
 ### Autorização no Cluster (AWS IAM → Kubernetes RBAC)
@@ -202,31 +222,6 @@ O EKS integra a autenticação AWS IAM com a autorização Kubernetes RBAC atrav
     ```
 
 3. Salve e saia. O acesso é concedido imediatamente.
-
-### Adaptando o kubeconfig para seu usuário
-
-O arquivo de kubeconfig do Bitwarden referencia o profile `nossas`. Você precisará ajustar para usar seu profile pessoal:
-
-```bash
-users:
-- name: arn:aws:eks:us-east-1:519061744633:cluster/eks-cluster-da5d31b
-  user:
-    exec:
-      apiVersion: client.authentication.k8s.io/v1beta1
-      command: aws
-      args:
-      - --region
-      - us-east-1
-      - eks
-      - get-token
-      - --cluster-name
-      - eks-cluster-da5d31b
-      - --output
-      - json
-      env:
-      - name: AWS_PROFILE  # ← Importante!
-        value: nome-de-profile # ← Altere para SEU profile (ex: pessoal, joao-aws, etc.)
-```
 
 ### Verificando o Acesso
 
