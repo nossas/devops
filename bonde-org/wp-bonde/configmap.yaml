@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wp-bonde-php-config
+  namespace: bonde-org
+data:
+  # Configurações otimizadas para uploads até 100MB
+  uploads.ini: |
+    upload_max_filesize = 100M
+    post_max_size = 110M
+    memory_limit = 256M
+    max_execution_time = 300
+    max_input_time = 300
+    max_input_vars = 5000
+    
+    ; Otimizações para WordPress
+    max_file_uploads = 20
+    allow_url_fopen = On
+    
+    ; Output Buffering
+    output_buffering = Off
+    
+    ; OpCache para performance
+    opcache.enable=1
+    opcache.memory_consumption=128
+    opcache.interned_strings_buffer=8
+    opcache.max_accelerated_files=4000
+    opcache.revalidate_freq=2
+    opcache.fast_shutdown=1
