@@ -357,6 +357,27 @@ data:
                                 ]
                             },
                             {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "brasilcontrabets.org",
+                                            "www.brasilcontrabets.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "static_response",
+                                        "status_code": 301,
+                                        "headers": {
+                                            "Location": [
+                                                "https://brasilcontrabets.com{uri}"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
                                 "handle": [
                                     {
                                         "handler": "reverse_proxy",
@@ -440,7 +461,9 @@ data:
                                 "pldadevastacao.org.br",
                                 "www.pldadevastacao.org.br",
                                 "pldadevastacao.com.br",
-                                "www.pldadevastacao.com.br"
+                                "www.pldadevastacao.com.br",
+                                "brasilcontrabets.org",
+                                "www.brasilcontrabets.org"
                             ]
                         },
                         {
