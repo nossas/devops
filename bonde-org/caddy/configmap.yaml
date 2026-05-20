@@ -203,7 +203,7 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["wp.bonde.org"]
+                                        "host": ["bonde.org", "www.bonde.org"]
                                     }
                                 ],
                                 "handle": [
@@ -403,7 +403,7 @@ data:
                                 "imaginary.bonde.org",
                                 "metabase.bonde.org",
                                 "n8n.bonde.org",
-                                "wp.bonde.org"
+                                "bonde.org"
                             ]
                         },
                         {
