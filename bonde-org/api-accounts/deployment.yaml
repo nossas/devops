@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-accounts
+  namespace: bonde-org
+  labels:
+    app: api-accounts
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-accounts
+  template:
+    metadata:
+      labels:
+        app: api-accounts
+    spec:
+      containers:
+      - name: api-accounts
+        image: nossas/bonde-apis:latest
+        command: ["pnpm", "--filter", "accounts-api", "start"]
+        ports:
+        - containerPort: 3000
+        env:
+        - name: HOST
+          value: "0.0.0.0"
+        - name: PORT
+          value: "3000"
+        - name: NODE_ENV
+          value: "development"
+        - name: GRAPHQL_HTTP_URL
+          value: "http://api-graphql:80/v1/graphql"
+        - name: ACCOUNTS_REGISTER_URL
+          value: "https://accounts.sandbox.bonde.org/register"
+        - name: APP_DOMAIN
+          value: "bonde.org"
+        - name: HASURA_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hasura-admin-secret
+              key: HASURA_SECRET
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: JWT_SECRET
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "50m"
+          limits:
+            memory: "500Mi"
+            cpu: "200m"

@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metabase
+  namespace: bonde-org
+  labels:
+    app: metabase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metabase
+  strategy:
+    type: Recreate # Evita múltiplas instâncias durante atualizações
+  template:
+    metadata:
+      labels:
+        app: metabase
+        version: "latest"
+    spec:
+      containers:
+      - name: metabase
+        image: metabase/metabase:v0.58.5
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+          name: http
+        env:
+        # Configurações fixas do ConfigMap
+        - name: JAVA_TIMEZONE
+          value: America/Sao_Paulo
+        # Configurações de memória otimizadas
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Xmx1g -Xms512m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+        - name: MB_DB_TYPE
+          value: postgres
+        # Credenciais do banco do Secret
+        - name: MB_DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: metabase-db-credentials
+              key: host
+        - name: MB_DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: metabase-db-credentials
+              key: port
+        - name: MB_DB_DBNAME
+          valueFrom:
+            secretKeyRef:
+              name: metabase-db-credentials
+              key: database
+        - name: MB_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: metabase-db-credentials
+              key: username
+        - name: MB_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: metabase-db-credentials
+              key: password
+        # Configurações de performance otimizadas
+        - name: MB_JETTY_MAX_QUEUED
+          value: "500"
+        - name: MB_JETTY_MAX_THREADS
+          value: "50"
+        # - name: MB_EMAIL_SMTP_HOST
+        #   value: ""  # Desabilitado para economia
+        # Otimizações de startup
+        # - name: MB_PLUGINS_DIR
+        #   value: "/plugins"  # Cache de plugins
+        - name: MB_APPLICATION_DATABASE_MAX_CONNECTION_POOL_SIZE
+          value: "10"  # Pool reduzido para economia
+        resources:
+          requests:
+            memory: "768Mi"  # Ajustado para o novo Xmx
+            cpu: "300m"      # Um pouco mais para PostgreSQL
+          limits:
+            memory: "1.5Gi"  # Limite aumentado para picos
+            cpu: "600m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 180
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 30

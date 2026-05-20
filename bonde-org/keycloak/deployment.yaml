@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: bonde-org
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+    #   # Affinity: separar pods em nós diferentes
+    #   affinity:
+    #     podAntiAffinity:
+    #       preferredDuringSchedulingIgnoredDuringExecution:
+    #       - weight: 100
+    #         podAffinityTerm:
+    #           labelSelector:
+    #             matchExpressions:
+    #             - key: app
+    #               operator: In
+    #               values:
+    #               - keycloak
+    #           topologyKey: kubernetes.io/hostname
+
+      containers:
+      - name: keycloak
+        image: nossas/bonde-keycloak:main
+        imagePullPolicy: Always
+        args: ["start"]
+        env:
+        # 1. Secrets (Armazene estas senhas em um Kubernetes Secret!)
+        - name: KC_BOOTSTRAP_ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-secrets
+              key: admin-user
+        - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-secrets
+              key: admin-password
+        - name: KC_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-secrets
+              key: db-password
+        - name: KC_DB_URL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-secrets
+              key: db-host
+        - name: KC_DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-secrets
+              key: db-user
+        # - name: KC_DB_URL_DATABASE
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: keycloak-secrets
+        #       key: db-database-url
+        - name: KC_DB_URL_DATABASE
+          value: "keycloak"
+        # 2. Configurações Principais (Ajuste os valores!)
+        - name: KC_HOSTNAME
+          value: "auth.bonde.org" # Seu domínio via Caddy Ingress
+        - name: KC_PROXY_HEADERS
+          value: "xforwarded"
+        # - name: KC_HOSTNAME_STRICT
+        #   value: "true"
+        # - name: KC_HOSTNAME_STRICT_HTTPS
+        #   value: "true"
+        # - name: KC_HOSTNAME_STRICT_BACKCHANNEL
+        #   value: "true"
+        - name: KC_PROXY
+          value: "edge" # Usar 'reencrypt' ou 'passthrough' se o Caddy fizer TLS
+        - name: KC_HTTP_ENABLED
+          value: "true"
+
+        # 3. Conexão com o Banco RDS
+        - name: KC_DB
+          value: "postgres"
+        - name: KC_DB_SCHEMA
+          value: "public"
+
+        # 4. Otimizações para Kubernetes
+        - name: KC_CACHE
+          value: "local"
+        # - name: KC_CACHE
+        #   value: "ispn"
+        # - name: KC_CACHE_STACK
+        #   value: "kubernetes" # Para descoberta automática entre pods
+        - name: KC_TRANSACTION_XA_ENABLED
+          value: "false"
+        - name: KC_HEALTH_ENABLED
+          value: "true"
+        - name: KC_METRICS_ENABLED
+          value: "true" # Essencial para monitorar e ajustar o dimensionamento
+
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: management
+          containerPort: 9000
+
+        # 5. REQUESTS e LIMITS (Ajuste baseado no SEU cálculo!)
+        resources:
+          requests:
+            memory: "1250Mi"   # Valor mais realista
+            cpu: "500m"        # 0.5 CPU inicial
+          limits:
+            memory: "1700Mi"   # Pode crescer
+            cpu: "1500m"       # Máximo 1.5 CPU
+
+        # 6. Health Checks (Crítico para o EKS)
+        startupProbe:
+          httpGet:
+            path: /health/started
+            port: 9000         # Teste também 9000 se não funcionar
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 60  # 10 minutos para build+start
+        
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 9000
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 12
+          timeoutSeconds: 5
+        
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 9000
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          failureThreshold: 3
+          timeoutSeconds: 5
+        
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 30"]
+
+        # 7. Montar volumes para temas customizados (opcional)
+      #   volumeMounts:
+      #     - name: custom-themes
+      #       mountPath: /opt/keycloak/themes
+      # volumes:
+      #   - name: custom-themes
+      #     configMap:
+      #       name: keycloak-custom-themes
