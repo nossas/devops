@@ -177,7 +177,7 @@ data:
                                         "handler": "reverse_proxy",
                                         "upstreams": [
                                             {
-                                                "dial": "metabase:80"
+                                                "dial": "metabase.tools.svc.cluster.local:80"
                                             }
                                         ]
                                     }

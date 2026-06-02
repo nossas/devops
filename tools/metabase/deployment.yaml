@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: metabase
-  namespace: bonde-org
+  namespace: tools
   labels:
     app: metabase
 spec:
