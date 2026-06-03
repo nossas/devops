@@ -378,6 +378,27 @@ data:
                                 ]
                             },
                             {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "tapagoexecuta.org",
+                                            "www.tapagoexecuta.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "static_response",
+                                        "status_code": 301,
+                                        "headers": {
+                                            "Location": [
+                                                "https://tapagoexecuta.com{uri}"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
                                 "handle": [
                                     {
                                         "handler": "reverse_proxy",
@@ -463,7 +484,9 @@ data:
                                 "pldadevastacao.com.br",
                                 "www.pldadevastacao.com.br",
                                 "brasilcontrabets.org",
-                                "www.brasilcontrabets.org"
+                                "www.brasilcontrabets.org",
+                                "tapagoexecuta.org",
+                                "www.tapagoexecuta.org"
                             ]
                         },
                         {
