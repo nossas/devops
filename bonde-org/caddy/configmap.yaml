@@ -381,8 +381,8 @@ data:
                                 "match": [
                                     {
                                         "host": [
-                                            "tapagoexecuta.org",
-                                            "www.tapagoexecuta.org"
+                                            "tapagoexecuta.com",
+                                            "www.tapagoexecuta.com"
                                         ]
                                     }
                                 ],
@@ -392,7 +392,7 @@ data:
                                         "status_code": 301,
                                         "headers": {
                                             "Location": [
-                                                "https://tapagoexecuta.com{uri}"
+                                                "https://tapagoexecuta.org{uri}"
                                             ]
                                         }
                                     }
