@@ -16,7 +16,7 @@ spec:
       containers:
       - name: public
         # image: nossas/bonde-public:latest
-        image: nossas/bonde-public:v1.2.0
+        image: nossas/bonde-public:v1.2.1
         command: ["pnpm", "--filter", "webpage-client", "start"]
         ports:
         - containerPort: 3000
