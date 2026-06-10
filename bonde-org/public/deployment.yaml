@@ -16,7 +16,7 @@ spec:
       containers:
       - name: public
         # image: nossas/bonde-public:latest
-        image: nossas/bonde-public:hotfix-finish-message-form-widget
+        image: nossas/bonde-public:v1.2.0
         command: ["pnpm", "--filter", "webpage-client", "start"]
         ports:
         - containerPort: 3000
@@ -37,7 +37,7 @@ spec:
         - name: REACT_APP_DOMAIN_API_REST
           value: "https://api-rest.bonde.org"
         - name: REACT_APP_DOMAIN_IMAGINARY
-          value: "https://imaginary.bonde.org"
+          value: "https://imagens.bonde.org"
         - name: NEXT_PUBLIC_PHONE_API_URL
           value: "https://actions-api.bonde.org"
         
