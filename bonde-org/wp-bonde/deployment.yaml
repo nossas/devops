@@ -60,7 +60,7 @@ spec:
         # Health checks simplificados
         livenessProbe:
           httpGet:
-            path: /readme.html
+            path: /
             port: 80
           initialDelaySeconds: 90
           periodSeconds: 10
@@ -68,7 +68,7 @@ spec:
         
         readinessProbe:
           httpGet:
-            path: /readme.html
+            path: /
             port: 80
           initialDelaySeconds: 30
           periodSeconds: 5
