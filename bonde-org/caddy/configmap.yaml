@@ -16,7 +16,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["auth.bonde.org"]
+                                        "host": [
+                                            "auth.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -33,7 +35,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["accounts.bonde.org"]
+                                        "host": [
+                                            "accounts.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -50,7 +54,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["admin-canary.bonde.org"]
+                                        "host": [
+                                            "admin-canary.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -67,7 +73,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["actions-api.bonde.org"]
+                                        "host": [
+                                            "actions-api.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -84,7 +92,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["api-data.bonde.org"]
+                                        "host": [
+                                            "api-data.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -101,7 +111,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["api-graphql.bonde.org"]
+                                        "host": [
+                                            "api-graphql.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -118,7 +130,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["api-rest.bonde.org"]
+                                        "host": [
+                                            "api-rest.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -135,7 +149,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["app.bonde.org"]
+                                        "host": [
+                                            "app.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -152,7 +168,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["imaginary.bonde.org"]
+                                        "host": [
+                                            "imaginary.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -169,7 +187,9 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["metabase.bonde.org"]
+                                        "host": [
+                                            "metabase.bonde.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -186,24 +206,10 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["n8n.bonde.org"]
-                                    }
-                                ],
-                                "handle": [
-                                    {
-                                        "handler": "reverse_proxy",
-                                        "upstreams": [
-                                            {
-                                                "dial": "n8n:80"
-                                            }
+                                        "host": [
+                                            "bonde.org",
+                                            "www.bonde.org"
                                         ]
-                                    }
-                                ]
-                            },
-                            {
-                                "match": [
-                                    {
-                                        "host": ["bonde.org", "www.bonde.org"]
                                     }
                                 ],
                                 "handle": [
@@ -220,7 +226,10 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["nossas.org", "www.nossas.org"]
+                                        "host": [
+                                            "nossas.org",
+                                            "www.nossas.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -237,24 +246,10 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["nossas.org", "www.nossas.org"]
-                                    }
-                                ],
-                                "handle": [
-                                    {
-                                        "handler": "reverse_proxy",
-                                        "upstreams": [
-                                            {
-                                                "dial": "cms-nossas:80"
-                                            }
+                                        "host": [
+                                            "aeleicaodoano.org",
+                                            "www.aeleicaodoano.org"
                                         ]
-                                    }
-                                ]
-                            },
-                            {
-                                "match": [
-                                    {
-                                        "host": ["aeleicaodoano.org", "www.aeleicaodoano.org"]
                                     }
                                 ],
                                 "handle": [
@@ -296,7 +291,10 @@ data:
                             {
                                 "match": [
                                     {
-                                        "host": ["votepeloclima.org", "www.votepeloclima.org"]
+                                        "host": [
+                                            "votepeloclima.org",
+                                            "www.votepeloclima.org"
+                                        ]
                                     }
                                 ],
                                 "handle": [
@@ -399,6 +397,66 @@ data:
                                 ]
                             },
                             {
+                                "match": [
+                                    {
+                                        "not": [
+                                            {
+                                                "path": [
+                                                    "/",
+                                                    "/_next/*",
+                                                    "/static/*",
+                                                    "/images/*",
+                                                    "/assets/*",
+                                                    "/fonts/*",
+                                                    "/favicon.ico",
+                                                    "/favicon.png",
+                                                    "/manifest.json",
+                                                    "/robots.txt",
+                                                    "/api/*",
+                                                    "/sitemap.xml"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "rate_limit",
+                                        "rate_limits": {
+                                            "scanner-block": {
+                                                "key": "{http.request.remote_ip}",
+                                                "window": "1m",
+                                                "max_events": 3
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "handler": "static_response",
+                                        "status_code": 444
+                                    }
+                                ]
+                            },
+                            {
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "localhost:8080"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "public": {
+                        "metrics": {},
+                        "listen": [
+                            ":8080"
+                        ],
+                        "routes": [
+                            {
                                 "handle": [
                                     {
                                         "handler": "reverse_proxy",
@@ -444,7 +502,6 @@ data:
                                 "app.bonde.org",
                                 "imaginary.bonde.org",
                                 "metabase.bonde.org",
-                                "n8n.bonde.org",
                                 "bonde.org"
                             ]
                         },

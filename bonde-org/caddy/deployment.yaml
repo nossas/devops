@@ -24,6 +24,7 @@ spec:
       containers:
       - name: caddy
         image: nossas/caddy-route53:main
+        imagePullPolicy: Always
         args:
           - "caddy"
           - "run"

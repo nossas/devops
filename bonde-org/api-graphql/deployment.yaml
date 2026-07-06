@@ -14,6 +14,10 @@ spec:
     metadata:
       labels:
         app: api-graphql
+      annotations:
+        # Annotation específica para o job "hasura"
+        hasura.io/scrape: "true"
+        hasura.io/port: "8080"
     spec:
       containers:
       - name: hasura
@@ -37,7 +41,7 @@ spec:
         - name: PORT
           value: "8080"
         - name: N8N_WEBHOOK_TRIGGER_POSTGRES_URL
-          value: "http://n8n:80/webhook/trigger-postgres"
+          value: "https://n8n.bonde.cloud/webhook/trigger-postgres"
         
         # URLs dos serviços dependentes
         - name: API_ACCOUNTS_URL
@@ -51,7 +55,7 @@ spec:
         - name: API_PAYMENTS_URL
           value: "http://api-payments:80"
         - name: N8N_WEBHOOK_URL
-          value: "http://n8n:80/webhook"
+          value: "https://n8n.bonde.cloud/webhook"
         - name: API_UPLOADS_URL
           value: "http://api-rest:80/uploads"
         
