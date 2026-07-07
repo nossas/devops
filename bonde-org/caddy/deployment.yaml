@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caddy
+  namespace: bonde-org
+  labels:
+    app: caddy
+    component: ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: caddy
+  template:
+    metadata:
+      labels:
+        app: caddy
+      annotations:
+        config/revision: "1"
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "2019"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: caddy
+        image: nossas/caddy-route53:main
+        imagePullPolicy: Always
+        args:
+          - "caddy"
+          - "run"
+          - "--config"
+          - "/etc/caddy/caddy.json"
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 443
+          name: https
+        - containerPort: 2019
+          name: metrics
+        env:
+        - name: CADDY_ADMIN
+          value: "0.0.0.0:2019"
+        - name: AWS_REGION
+          valueFrom:
+            secretKeyRef:
+              name: caddy-secret
+              key: AWS_REGION
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: caddy-secret
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: caddy-secret
+              key: AWS_SECRET_ACCESS_KEY
+        volumeMounts:
+        - name: caddy-config
+          mountPath: /etc/caddy
+        - name: caddy-data
+          mountPath: /data
+          subPath: "caddy/bonde-org/data"
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "10m"
+          limits:
+            memory: "800Mi"
+            cpu: "50m"
+      volumes:
+      - name: caddy-config
+        configMap:
+          name: caddy-config
+      - name: caddy-data
+        persistentVolumeClaim:
+          claimName: caddy-certificates

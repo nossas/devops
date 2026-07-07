@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-notifications
+  namespace: bonde-org
+  labels:
+    app: api-notifications
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-notifications
+  template:
+    metadata:
+      labels:
+        app: api-notifications
+    spec:
+      containers:
+      - name: api-notifications
+        image: nossas/bonde-apis:latest
+        command: ["pnpm", "--filter", "notifications", "start"]
+        ports:
+        - containerPort: 3000
+        env:
+        - name: HOST
+          value: "0.0.0.0"
+        - name: PORT
+          value: "3000"
+        - name: NODE_ENV
+          value: "production"
+        - name: ELASTIC_APM_SERVICE_NAME
+          value: "notifications"
+        - name: ELASTICSEARCH_CLOUD_ID
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-cloud-id
+              key: ELASTICSEARCH_CLOUD_ID
+        - name: ELASTICSEARCH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-password
+              key: ELASTICSEARCH_PASSWORD
+        - name: ELASTIC_APM_SECRET_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: elastic-apm-secret-token
+              key: ELASTIC_APM_SECRET_TOKEN
+        - name: ELASTIC_APM_SERVER_URL
+          valueFrom:
+            secretKeyRef:
+              name: elastic-apm-server-url
+              key: ELASTIC_APM_SERVER_URL
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: sendgrid-api-key
+              key: SENDGRID_API_KEY
+        - name: SENDGRID_WEBHOOK_KEY
+          valueFrom:
+            secretKeyRef:
+              name: sendgrid-webhook-key
+              key: SENDGRID_WEBHOOK_KEY
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+          limits:
+            memory: "500Mi"
+            cpu: "500m"

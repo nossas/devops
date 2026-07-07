@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-activists
+  namespace: bonde-org
+  labels:
+    app: api-activists
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-activists
+  template:
+    metadata:
+      labels:
+        app: api-activists
+    spec:
+      containers:
+      - name: api-activists
+        image: nossas/bonde-apis:latest
+        command: ["pnpm", "--filter", "activists-api", "start"]
+        ports:
+        - containerPort: 3000
+        env:
+        - name: HOST
+          value: "0.0.0.0"
+        - name: PORT
+          value: "3000"
+        - name: NODE_ENV
+          value: "development"
+        - name: GRAPHQL_HTTP_URL
+          value: "http://api-graphql:80/v1/graphql"
+        - name: AWS_ENDPOINT
+          value: "https://s3.amazonaws.com"
+        - name: AWS_BUCKET
+          value: "amazoniadepe"
+        - name: ACTION_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: action-secret
+              key: ACTION_SECRET_KEY
+        - name: HASURA_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hasura-admin-secret
+              key: HASURA_SECRET
+        - name: AWS_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret-key
+              key: AWS_SECRET_KEY
+        - name: AWS_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-access-key
+              key: AWS_ACCESS_KEY
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "50m"
+          limits:
+            memory: "500Mi"
+            cpu: "200m"

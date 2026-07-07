@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-rest
+  namespace: bonde-org
+  labels:
+    app: api-rest
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-rest
+  template:
+    metadata:
+      labels:
+        app: api-rest
+    spec:
+      imagePullSecrets:
+      - name: ghcr-auth
+      containers:
+      - name: api-rest
+        image: ghcr.io/nossas/bonde-server:latest
+        command: ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: WEB_CONCURRENCY
+          value: "2"
+        - name: WEB_MEMORY
+          value: "1024"
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: AWS_BUCKET
+          value: "hub-central"
+        - name: AWS_ENDPOINT
+          value: "https://s3.amazonaws.com"
+        - name: AWS_ROUTE53_SYNC
+          value: "force"
+        - name: AWS_ROUTE_IP
+          value: "127.0.0.1"
+        - name: API_HOST
+          value: "api-rest.bonde.org"
+        - name: CLIENT_HOST
+          value: "bonde.org"
+        - name: LOG_LEVEL
+          value: "info"
+        - name: RAILS_ENV
+          value: "development"
+        - name: RAILS_SERVE_STATIC_FILES
+          value: "enabled"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: bonde-database-url
+              key: DATABASE_URL
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: JWT_SECRET
+        - name: AWS_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-access-key
+              key: AWS_ACCESS_KEY
+        - name: AWS_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret-key
+              key: AWS_SECRET_KEY
+        - name: SMTP_HOST
+          valueFrom:
+            secretKeyRef:
+              name: smtp-secret
+              key: SMTP_HOST
+        - name: SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: smtp-secret
+              key: SMTP_PASS
+        - name: SMTP_PORT
+          valueFrom:
+            secretKeyRef:
+              name: smtp-secret
+              key: SMTP_PORT
+        - name: SMTP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: smtp-secret
+              key: SMTP_USER
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "100m"
+          limits:
+            memory: "1020Mi"
+            cpu: "400m"

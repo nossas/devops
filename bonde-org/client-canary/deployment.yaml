@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-canary
+  namespace: bonde-org
+  labels:
+    app: client-canary
+    component: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client-canary
+  template:
+    metadata:
+      labels:
+        app: client-canary
+    spec:
+      containers:
+      - name: client-canary
+        image: nossas/bonde-clients:v9.0.11
+        imagePullPolicy: Always
+        command: ["pnpm", "--filter", "canary-client", "start"]
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "10m"
+          limits:
+            memory: "300Mi"
+            cpu: "100m"

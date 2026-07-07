@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-admin
+  namespace: bonde-org
+  labels:
+    app: client-admin
+    component: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client-admin
+  template:
+    metadata:
+      labels:
+        app: client-admin
+    spec:
+      containers:
+      - name: client-admin
+        image: nossas/bonde-clients:v9.0.12
+        imagePullPolicy: Always
+        command: ["pnpm", "--filter", "admin-client", "start"]
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "10m"
+          limits:
+            memory: "300Mi"
+            cpu: "100m"

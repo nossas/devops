@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: on-demand
+  namespace: bonde-org
+  labels:
+    app: on-demand
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: on-demand
+  template:
+    metadata:
+      labels:
+        app: on-demand
+    spec:
+      containers:
+      - name: on-demand
+        image: nossas/tls-on-demand:latest
+        ports:
+        - containerPort: 3005
+          name: http
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: bonde-database-url
+              key: BONDE_DATABASE_URL
+        - name: ENVIRONMENT
+          value: "bonde-org"
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "5m"
+          limits:
+            memory: "200Mi"
+            cpu: "25m"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 3005
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 3005
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 5

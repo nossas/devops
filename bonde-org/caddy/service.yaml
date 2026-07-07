@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: caddy
+  namespace: bonde-org
+  labels:
+    app: caddy
+    environment: bonde-org
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-attributes: |
+      load_balancing.cross_zone.enabled=true,tags=Environment=bonde-org,Namespace=bonde-org
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 443
+    protocol: TCP
+  - name: metrics
+    port: 2019
+    targetPort: 2019
+    protocol: TCP
+  selector:
+    app: caddy

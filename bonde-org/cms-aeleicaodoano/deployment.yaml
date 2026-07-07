@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cms-aeleicaodoano
+  namespace: bonde-org
+  labels:
+    app: cms-aeleicaodoano
+    component: cms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cms-aeleicaodoano
+  template:
+    metadata:
+      labels:
+        app: cms-aeleicaodoano
+    spec:
+      containers:
+      - name: cms-aeleicaodoano
+        image: nossas/eleicoes-cms:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DJANGO_SETTINGS_MODULE
+          value: "org_eleicoes.eleicaodoano.settings.production"
+        - name: DEBUG
+          value: "False"
+        - name: AWS_S3_REGION_NAME
+          value: "us-east-1"
+        - name: AWS_STORAGE_BUCKET_NAME
+          value: "eleicaodoano"
+        - name: DISABLE_RECAPTCHA
+          value: "True"
+        - name: BONDE_ACTION_API_URL
+          value: "http://api-graphql:80/v1/graphql"
+        - name: ALLOWED_HOSTS
+          value: "aeleicaodoano.org,www.aeleicaodoano.org,aeleicaodoano.com,www.aeleicaodoano.com,aeleicaodoano.com.br,www.aeleicaodoano.com.br,aeleicaodoano.org.br,www.aeleicaodoano.org.br"
+        - name: ADMINS
+          value: "('BONDE', 'suporte@bonde.org'),"
+        - name: BONDE_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: bonde-database-url
+              key: BONDE_DATABASE_URL
+        - name: CMS_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: aeleicaodoano-database-url
+              key: CMS_DATABASE_URL
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-access-key
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret-key
+              key: AWS_SECRET_ACCESS_KEY
+        - name: BONDE_ACTION_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: action-secret
+              key: BONDE_ACTION_SECRET_KEY
+        - name: SMTP_HOST
+          valueFrom:
+            secretKeyRef:
+              name: smtp-secret
+              key: SMTP_HOST
+        - name: SMTP_PORT
+          valueFrom:
+            secretKeyRef:
+              name: smtp-secret
+              key: SMTP_PORT
+        - name: SMTP_USER
+          valueFrom:
+            secretKeyRef:
+              name: smtp-secret
+              key: SMTP_USER
+        - name: SMTP_PASS
+          valueFrom:
+            secretKeyRef:
+              name: smtp-secret
+              key: SMTP_PASS
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "50m"
+          limits:
+            memory: "1000Mi"
+            cpu: "200m"

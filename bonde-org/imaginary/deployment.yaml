@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imaginary
+  namespace: bonde-org
+  labels:
+    app: imaginary
+    component: image-processing
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: imaginary
+  template:
+    metadata:
+      labels:
+        app: imaginary
+        component: image-processing
+    spec:
+      containers:
+      - name: imaginary
+        image: h2non/imaginary:latest
+        command: 
+          - "imaginary"
+          - "-enable-url-source"
+          - "-cors"
+          - "-allowed-origins"
+          - "https://s3.amazonaws.com/hub-central/uploads/"
+          - "-http-cache-ttl"
+          - "31556926"
+          - "-enable-placeholder"
+          - "-concurrency"
+          - "50"
+        ports:
+        - containerPort: 9000
+          name: http
+        env:
+        - name: PORT
+          value: "9000"
+        - name: DEBUG
+          value: "*"
+        - name: IMAGINARY_ALLOWED_ORIGINS
+          value: "https://s3.amazonaws.com/hub-central/uploads/"
+        - name: IMAGINARY_REDIS_URL
+          value: "redis://redis:6379"
+        - name: IMAGINARY_REDIS_PASSWORD
+          value: ""
+        - name: IMAGINARY_REDIS_MAX_CONNECTIONS
+          value: "10"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 9000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 5

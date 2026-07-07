@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: public
+  namespace: bonde-org
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: public
+  template:
+    metadata:
+      labels:
+        app: public
+    spec:
+      containers:
+      - name: public
+        # image: nossas/bonde-public:latest
+        image: nossas/bonde-public:v1.2.1
+        command: ["pnpm", "--filter", "webpage-client", "start"]
+        ports:
+        - containerPort: 3000
+        env:
+        # Variáveis diretas
+        - name: PORT
+          value: "3000"
+        - name: NODE_ENV
+          value: "production"
+        - name: REACT_APP_DOMAIN_PUBLIC
+          value: "bonde.org"
+        - name: REACT_APP_ACTIVE_API_CACHE
+          value: "false"
+        - name: REACT_APP_DOMAIN_API_ACTIVISTS
+          value: "http://api-activists:80"
+        - name: REACT_APP_DOMAIN_API_GRAPHQL
+          value: "http://api-graphql:80/v1/graphql"
+        - name: REACT_APP_DOMAIN_API_REST
+          value: "https://api-rest.bonde.org"
+        - name: REACT_APP_DOMAIN_IMAGINARY
+          value: "https://imagens.bonde.org"
+        - name: NEXT_PUBLIC_PHONE_API_URL
+          value: "https://actions-api.bonde.org"
+        
+        # ✅ SECRETS CORRIGIDOS (usando chaves reais)
+        - name: ACTION_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: action-secret
+              key: ACTION_SECRET_KEY  # ← CHAVE CORRETA
+        
+        - name: REACT_APP_API_GRAPHQL_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hasura-admin-secret
+              key: REACT_APP_API_GRAPHQL_SECRET  # ← CHAVE CORRETA
+        
+        - name: REACT_APP_PAGARME_KEY
+          valueFrom:
+            secretKeyRef:
+              name: pagarme-key
+              key: REACT_APP_PAGARME_KEY  # ← CHAVE CORRETA
+        
+        resources:
+          requests:
+            memory: "600Mi"
+            cpu: "200m"
+          limits:
+            memory: "1280Mi"
+            cpu: "800m"
+        livenessProbe:
+          httpGet:
+            path: /api/ping
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10

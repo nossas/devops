@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-graphql
+  namespace: bonde-org
+  labels:
+    app: api-graphql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-graphql
+  template:
+    metadata:
+      labels:
+        app: api-graphql
+      annotations:
+        # Annotation específica para o job "hasura"
+        hasura.io/scrape: "true"
+        hasura.io/port: "8080"
+    spec:
+      containers:
+      - name: hasura
+        image: hasura/graphql-engine:latest
+        ports:
+        - containerPort: 8080
+        env:
+        # Variáveis fixas do Hasura
+        - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+          value: "true"
+        - name: HASURA_GRAPHQL_UNAUTHORIZED_ROLE
+          value: "anonymous"
+        - name: HASURA_GRAPHQL_ENABLED_LOG_TYPES
+          value: "startup,query-log,http-log,webhook-log,websocket-log"
+        - name: HASURA_GRAPHQL_LOG_LEVEL
+          value: "debug"
+        - name: HASURA_GRAPHQL_CORS_DOMAIN
+          value: "*"
+        - name: HASURA_GRAPHQL_INFER_FUNCTION_PERMISSIONS
+          value: "false"
+        - name: PORT
+          value: "8080"
+        - name: N8N_WEBHOOK_TRIGGER_POSTGRES_URL
+          value: "https://n8n.bonde.cloud/webhook/trigger-postgres"
+        
+        # URLs dos serviços dependentes
+        - name: API_ACCOUNTS_URL
+          value: "http://api-accounts:80"
+        - name: API_DOMAINS_URL
+          value: "http://api-domains:80"
+        - name: API_NOTIFICATIONS_URL
+          value: "http://api-notifications:80"
+        - name: API_ACTIVISTS_URL
+          value: "http://api-activists:80"
+        - name: API_PAYMENTS_URL
+          value: "http://api-payments:80"
+        - name: N8N_WEBHOOK_URL
+          value: "https://n8n.bonde.cloud/webhook"
+        - name: API_UPLOADS_URL
+          value: "http://api-rest:80/uploads"
+        
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hasura-admin-secret
+              key: HASURA_GRAPHQL_ADMIN_SECRET
+        
+        - name: HASURA_GRAPHQL_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: bonde-database-url
+              key: HASURA_GRAPHQL_DATABASE_URL
+        
+        - name: HASURA_GRAPHQL_VOTEPELOCLIMA_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: votepeloclima-database-url
+              key: HASURA_GRAPHQL_VOTEPELOCLIMA_DATABASE_URL
+        
+        - name: HASURA_GRAPHQL_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: HASURA_GRAPHQL_JWT_SECRET
+        
+        - name: N8N_WEBHOOK_TRIGGER_POSTGRES_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: n8n-webhook-secret
+              key: N8N_WEBHOOK_TRIGGER_POSTGRES_AUTH
+        
+        resources:
+          requests:
+            memory: "800Mi"
+            cpu: "100m"
+          limits:
+            memory: "1.5Gi"
+            cpu: "500m"
+        
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10

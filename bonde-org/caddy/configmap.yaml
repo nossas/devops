@@ -1,0 +1,530 @@
+apiVersion: v1
+data:
+  Caddyfile: ""
+  caddy.json: |-
+    {
+        "apps": {
+            "http": {
+                "servers": {
+                    "srv0": {
+                        "metrics": {},
+                        "listen": [
+                            ":80",
+                            ":443"
+                        ],
+                        "routes": [
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "auth.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "keycloak:8080"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "accounts.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "client-accounts:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "admin-canary.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "client-canary:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "actions-api.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "api-actions:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "api-data.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "api-data:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "api-graphql.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "api-graphql:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "api-rest.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "api-rest:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "app.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "client-admin:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "imaginary.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "imaginary:9000"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "metabase.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "metabase.tools.svc.cluster.local:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "bonde.org",
+                                            "www.bonde.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "wp-bonde:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "nossas.org",
+                                            "www.nossas.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "cms-nossas:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "aeleicaodoano.org",
+                                            "www.aeleicaodoano.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "cms-aeleicaodoano:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "aeleicaodoano.org.br",
+                                            "www.aeleicaodoano.org.br",
+                                            "aeleicaodoano.com",
+                                            "www.aeleicaodoano.com",
+                                            "aeleicaodoano.com.br",
+                                            "www.aeleicaodoano.com.br"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "static_response",
+                                        "status_code": 301,
+                                        "headers": {
+                                            "Location": [
+                                                "https://aeleicaodoano.org{uri}"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "pldadevastacao.com.br",
+                                            "www.pldadevastacao.com.br",
+                                            "pldadevastacao.org.br",
+                                            "www.pldadevastacao.org.br"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "static_response",
+                                        "status_code": 301,
+                                        "headers": {
+                                            "Location": [
+                                                "https://pldadevastacao.org{uri}"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "brasilcontrabets.org",
+                                            "www.brasilcontrabets.org"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "static_response",
+                                        "status_code": 301,
+                                        "headers": {
+                                            "Location": [
+                                                "https://brasilcontrabets.com{uri}"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "host": [
+                                            "tapagoexecuta.com",
+                                            "www.tapagoexecuta.com"
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "static_response",
+                                        "status_code": 301,
+                                        "headers": {
+                                            "Location": [
+                                                "https://tapagoexecuta.org{uri}"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "match": [
+                                    {
+                                        "not": [
+                                            {
+                                                "path": [
+                                                    "/",
+                                                    "/_next/*",
+                                                    "/static/*",
+                                                    "/images/*",
+                                                    "/assets/*",
+                                                    "/fonts/*",
+                                                    "/favicon.ico",
+                                                    "/favicon.png",
+                                                    "/manifest.json",
+                                                    "/robots.txt",
+                                                    "/api/*",
+                                                    "/sitemap.xml"
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ],
+                                "handle": [
+                                    {
+                                        "handler": "rate_limit",
+                                        "rate_limits": {
+                                            "scanner-block": {
+                                                "key": "{http.request.remote_ip}",
+                                                "window": "1m",
+                                                "max_events": 3
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "handler": "static_response",
+                                        "status_code": 444
+                                    }
+                                ]
+                            },
+                            {
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "localhost:8080"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "public": {
+                        "metrics": {},
+                        "listen": [
+                            ":8080"
+                        ],
+                        "routes": [
+                            {
+                                "handle": [
+                                    {
+                                        "handler": "reverse_proxy",
+                                        "upstreams": [
+                                            {
+                                                "dial": "public:80"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            },
+            "tls": {
+                "automation": {
+                    "policies": [
+                        {
+                            "@id": "tls.automation.core",
+                            "issuers": [
+                                {
+                                    "module": "acme",
+                                    "challenges": {
+                                        "dns": {
+                                            "provider": {
+                                                "name": "route53",
+                                                "region": "us-east-1"
+                                            }
+                                        }
+                                    },
+                                    "email": "tech@bonde.org"
+                                }
+                            ],
+                            "subjects": [
+                                "auth.bonde.org",
+                                "accounts.bonde.org",
+                                "admin-canary.bonde.org",
+                                "actions-api.bonde.org",
+                                "api-data.bonde.org",
+                                "api-graphql.bonde.org",
+                                "api-rest.bonde.org",
+                                "app.bonde.org",
+                                "imaginary.bonde.org",
+                                "metabase.bonde.org",
+                                "bonde.org"
+                            ]
+                        },
+                        {
+                            "@id": "tls.automation.cms",
+                            "issuers": [
+                                {
+                                    "module": "acme",
+                                    "email": "tech@bonde.org",
+                                    "ca": "https://acme-v02.api.letsencrypt.org/directory"
+                                },
+                                {
+                                    "module": "acme",
+                                    "email": "igor@nossas.org",
+                                    "ca": "https://acme.zerossl.com/v2/DV90"
+                                }
+                            ],
+                            "subjects": [
+                                "nossas.org",
+                                "www.nossas.org",
+                                "aeleicaodoano.org",
+                                "www.aeleicaodoano.org",
+                                "aeleicaodoano.org.br",
+                                "www.aeleicaodoano.org.br",
+                                "aeleicaodoano.com",
+                                "www.aeleicaodoano.com",
+                                "aeleicaodoano.com.br",
+                                "www.aeleicaodoano.com.br",
+                                "pldadevastacao.org.br",
+                                "www.pldadevastacao.org.br",
+                                "pldadevastacao.com.br",
+                                "www.pldadevastacao.com.br",
+                                "brasilcontrabets.org",
+                                "www.brasilcontrabets.org",
+                                "tapagoexecuta.com",
+                                "www.tapagoexecuta.com"
+                            ]
+                        },
+                        {
+                            "@id": "tls.automation.public-on-demand",
+                            "issuers": [
+                                {
+                                    "module": "acme",
+                                    "email": "tech@bonde.org",
+                                    "ca": "https://acme-v02.api.letsencrypt.org/directory"
+                                },
+                                {
+                                    "module": "acme",
+                                    "email": "igor@nossas.org",
+                                    "ca": "https://acme.zerossl.com/v2/DV90"
+                                }
+                            ],
+                            "on_demand": true
+                        }
+                    ],
+                    "on_demand": {
+                        "permission": {
+                            "module": "http",
+                            "endpoint": "http://on-demand:80/verify"
+                        }
+                    }
+                }
+            }
+        }
+    }
+kind: ConfigMap
+metadata:
+  name: caddy-config
+  namespace: bonde-org

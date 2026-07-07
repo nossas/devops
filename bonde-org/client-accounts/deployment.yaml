@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-accounts
+  namespace: bonde-org
+  labels:
+    app: client-accounts
+    component: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client-accounts
+  template:
+    metadata:
+      labels:
+        app: client-accounts
+    spec:
+      containers:
+      - name: client-accounts
+        image: nossas/bonde-clients:v9.0.11
+        imagePullPolicy: Always
+        command: ["pnpm", "--filter", "accounts-client", "start"]
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "10m"
+          limits:
+            memory: "300Mi"
+            cpu: "100m"
