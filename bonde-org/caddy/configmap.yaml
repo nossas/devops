@@ -292,49 +292,6 @@ data:
                                 "match": [
                                     {
                                         "host": [
-                                            "votepeloclima.org",
-                                            "www.votepeloclima.org"
-                                        ]
-                                    }
-                                ],
-                                "handle": [
-                                    {
-                                        "handler": "reverse_proxy",
-                                        "upstreams": [
-                                            {
-                                                "dial": "cms-votepeloclima:80"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "match": [
-                                    {
-                                        "host": [
-                                            "votepeloclima.com",
-                                            "www.votepeloclima.com",
-                                            "votepeloclima.com.br",
-                                            "www.votepeloclima.com.br"
-                                        ]
-                                    }
-                                ],
-                                "handle": [
-                                    {
-                                        "handler": "static_response",
-                                        "status_code": 301,
-                                        "headers": {
-                                            "Location": [
-                                                "https://votepeloclima.org{uri}"
-                                            ]
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "match": [
-                                    {
-                                        "host": [
                                             "pldadevastacao.com.br",
                                             "www.pldadevastacao.com.br",
                                             "pldadevastacao.org.br",
@@ -522,12 +479,6 @@ data:
                             "subjects": [
                                 "nossas.org",
                                 "www.nossas.org",
-                                "votepeloclima.org",
-                                "www.votepeloclima.org",
-                                "votepeloclima.com",
-                                "www.votepeloclima.com",
-                                "votepeloclima.com.br",
-                                "www.votepeloclima.com.br",
                                 "aeleicaodoano.org",
                                 "www.aeleicaodoano.org",
                                 "aeleicaodoano.org.br",
