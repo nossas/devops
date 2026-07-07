@@ -13,40 +13,6 @@ spec:
       labels:
         app: wp-bonde
     spec:
-      # ✅ INITCONTAINER CORRIGIDO
-      initContainers:
-      - name: install-php-redis
-        image: wordpress:6.9-php8.2-apache
-        command:
-        - /bin/bash
-        - -c
-        - |
-          set -eux
-          echo "📦 Instalando extensão Redis..."
-          
-          apt-get update
-          apt-get install -y --no-install-recommends git libssl-dev
-          
-          # ✅ Instala o mysqli explicitamente
-          docker-php-ext-install -j$(nproc) mysqli
-          
-          # Instala o Redis
-          pecl install redis
-          
-          # ✅ Habilita AMBAS as extensões
-          docker-php-ext-enable redis mysqli
-          
-          # Verifica
-          php -m | grep -E "redis|mysqli"
-          echo "✅ Extensões instaladas: redis e mysqli"
-        volumeMounts:
-        - name: wordpress-storage
-          mountPath: /var/www/html
-        - name: php-extensions
-          mountPath: /usr/local/lib/php/extensions
-        - name: php-conf
-          mountPath: /usr/local/etc/php/conf.d
-      
       containers:
       - name: wp-bonde
         image: wordpress:6.9-php8.2-apache
@@ -77,11 +43,13 @@ spec:
               name: wordpress-db-secrets
               key: db-password
         
+        # Configurações opcionais (podem ser removidas se usar wp-config personalizado)
         - name: WORDPRESS_TABLE_PREFIX
           value: "wp_"
         - name: WORDPRESS_DEBUG
           value: "0"
         
+        # Configurações de PHP para uploads maiores
         - name: PHP_MEMORY_LIMIT
           value: "512M"
         - name: PHP_UPLOAD_MAX_FILESIZE
@@ -90,22 +58,22 @@ spec:
           value: "110M"
 
         # Configuração do Redis
-        - name: WP_REDIS_HOST
-          value: "redis"
-        - name: WP_REDIS_PORT
-          value: "6379"
-        - name: WP_REDIS_DATABASE
-          value: "0"
-        - name: WP_REDIS_TIMEOUT
-          value: "1"
-        - name: WP_REDIS_READ_TIMEOUT
-          value: "1"
-        - name: WP_REDIS_PREFIX
-          value: "wp_bonde_"
+        # - name: WP_REDIS_HOST
+        #   value: "redis"  # Serviço do Redis no Kubernetes
+        # - name: WP_REDIS_PORT
+        #   value: "6379"
+        # - name: WP_REDIS_DATABASE
+        #   value: "0"
+        # - name: WP_REDIS_TIMEOUT
+        #   value: "1"
+        # - name: WP_REDIS_READ_TIMEOUT
+        #   value: "1"
+        # - name: WP_REDIS_PREFIX
+        #   value: "wp_bonde_"  # Prefixo para evitar conflitos se usar o mesmo Redis para outros sites
 
-        # ✅ WORDPRESS_CONFIG_EXTRA SEM WP_CACHE DUPLICADO
         - name: WORDPRESS_CONFIG_EXTRA
           value: |
+            define('WP_CACHE', true);
             define('WP_REDIS_HOST', getenv('WP_REDIS_HOST') ?: 'redis');
             define('WP_REDIS_PORT', getenv('WP_REDIS_PORT') ?: 6379);
             define('WP_REDIS_DATABASE', getenv('WP_REDIS_DATABASE') ?: 0);
@@ -113,7 +81,7 @@ spec:
             define('WP_REDIS_READ_TIMEOUT', getenv('WP_REDIS_READ_TIMEOUT') ?: 1);
             define('WP_REDIS_PREFIX', getenv('WP_REDIS_PREFIX') ?: 'wp_bonde_');
         
-        # Health checks
+        # Health checks simplificados
         livenessProbe:
           httpGet:
             path: /
@@ -129,6 +97,7 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 5
         
+        # Limites de recursos
         resources:
           requests:
             memory: "512Mi"
@@ -137,17 +106,15 @@ spec:
             memory: "1024Mi"
             cpu: "800m"
         
+        # Mount dos volumes
         volumeMounts:
         - name: wordpress-storage
           mountPath: /var/www/html
         - name: php-config
           mountPath: /usr/local/etc/php/conf.d/99-uploads.ini
           subPath: uploads.ini
-        - name: php-extensions
-          mountPath: /usr/local/lib/php/extensions
-        - name: php-conf
-          mountPath: /usr/local/etc/php/conf.d
         
+        # Configurações de segurança do container
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: false
@@ -159,7 +126,3 @@ spec:
       - name: php-config
         configMap:
           name: wp-bonde-php-config
-      - name: php-extensions
-        emptyDir: {}
-      - name: php-conf
-        emptyDir: {}
